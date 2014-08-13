@@ -1,3 +1,5 @@
+ 0.06
+
  0.05
   - Provide LD_DBL_DIG LD_LDBL_DIG ld_min_inter_prec ld_max_orig_len
     ld_min_inter_base and ld_max_orig_base functions.
