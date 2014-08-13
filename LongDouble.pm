@@ -44,7 +44,7 @@ use overload
 
 use subs qw(LD_DBL_DIG LD_LDBL_DIG);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 #$VERSION = eval $VERSION;
 
 DynaLoader::bootstrap Math::LongDouble $Math::LongDouble::VERSION;
