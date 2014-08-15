@@ -1,4 +1,5 @@
  0.06
+  - Add -DOLDPERL capability to Makefile.PL
 
  0.05
   - Provide LD_DBL_DIG LD_LDBL_DIG ld_min_inter_prec ld_max_orig_len
