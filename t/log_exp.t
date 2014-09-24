@@ -59,7 +59,7 @@ else {
   print "not ok 6\n";
 }
 
-if(Math::LongDouble::_long_double_size() != $Config{nvsize}) {
+if(Math::LongDouble::_long_double_size() != $Config{nvsize} || ($Config{nvtype} eq '__float128' && LD_LDBL_MANT_DIG != 113)) {
   if(cmp_NV($exp_ld, $exp)) {print "ok 7\n"}
   else {
     warn "\n\$exp_ld: $exp_ld\n\$exp: $exp\n";
@@ -79,3 +79,5 @@ sub approx {
     return 0 if $eps > Math::LongDouble->new(0.000000001);
     return 1;
 }
+
+sub _long_double_prec
