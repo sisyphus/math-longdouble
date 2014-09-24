@@ -893,6 +893,22 @@ SV * _DBL_DIG(pTHX) {
 #endif
 }
 
+SV * _LDBL_MANT_DIG(pTHX) {
+#ifdef LDBL_MANT_DIG
+     return newSViv(LDBL_MANT_DIG);
+#else
+     return newSViv(0);
+#endif
+}
+
+SV * _DBL_MANT_DIG(pTHX) {
+#ifdef DBL_MANT_DIG
+     return newSViv(DBL_MANT_DIG);
+#else
+     return newSViv(0);
+#endif
+}
+
 SV * _get_xs_version(pTHX) {
      return newSVpv(XS_VERSION, 0);
 }
@@ -1375,6 +1391,20 @@ SV *
 _DBL_DIG ()
 CODE:
   RETVAL = _DBL_DIG (aTHX);
+OUTPUT:  RETVAL
+
+
+SV *
+_LDBL_MANT_DIG ()
+CODE:
+  RETVAL = _LDBL_MANT_DIG (aTHX);
+OUTPUT:  RETVAL
+
+
+SV *
+_DBL_MANT_DIG ()
+CODE:
+  RETVAL = _DBL_MANT_DIG (aTHX);
 OUTPUT:  RETVAL
 
 
