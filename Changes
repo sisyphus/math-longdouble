@@ -1,3 +1,5 @@
+ 0.07
+
  0.06
   - Add -DOLDPERL capability to Makefile.PL
   - Add LD_LDBL_MANT_DIG and LD_DBL_MANT_DIG
