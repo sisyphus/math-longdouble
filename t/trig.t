@@ -3,7 +3,9 @@ use strict;
 use Math::LongDouble qw(:all);
 use Config;
 
-print "1..3\n";
+print "1..6\n";
+
+warn "\n", Math::LongDouble::_sincosl_status(), "\n";
 
 my $r = 2.0;
 my $r2 = 1.5;
@@ -36,7 +38,23 @@ else {
   print "not ok 3\n";
 }
 
+if($atan2_ldr == atan2("2.0", $ldr2)) {print "ok 4\n"}
+else {
+  warn "\nExpected $atan2_ldr\nGot ", atan2("2.0", $ldr2), "\n";
+  print "not ok 4\n";
+}
 
+if($atan2_ldr == atan2(2, $ldr2)) {print "ok 5\n"}
+else {
+  warn "\nExpected $atan2_ldr\nGot ", atan2("2.0", $ldr2), "\n";
+  print "not ok 5\n";
+}
+
+if($atan2_ldr == atan2($ldr, 1.5)) {print "ok 6\n"}
+else {
+  warn "\nExpected $atan2_ldr\nGot ", atan2($ldr, 1.5), "\n";
+  print "not ok 6\n";
+}
 
 sub approx {
     my $eps = abs($_[0] - Math::LongDouble->new($_[1]));
