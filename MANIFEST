@@ -19,5 +19,6 @@ t/pow.t
 t/prec.t
 t/stringification.t
 t/trig.t
+typemap
 
 
