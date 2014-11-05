@@ -42,7 +42,7 @@ use overload
   '--'    => \&_overload_dec,
 ;
 
-use subs qw(LD_DBL_DIG LD_LDBL_DIG);
+use subs qw(LD_DBL_DIG LD_LDBL_DIG LD_DBL_MANT_DIG LD_LDBL_MANT_DIG);
 
 our $VERSION = '0.07';
 #$VERSION = eval $VERSION;
@@ -55,6 +55,7 @@ DynaLoader::bootstrap Math::LongDouble $Math::LongDouble::VERSION;
     LDtoNV LDtoLD cmp_NV
     ld_set_prec ld_get_prec LDtoSTRP
     LD_DBL_DIG LD_LDBL_DIG LD_DBL_MANT_DIG LD_LDBL_MANT_DIG
+
     ld_max_orig_len ld_min_inter_prec ld_min_inter_base ld_max_orig_base ld_bytes
 
     llrint_LD llround_LD lrint_LD lround_LD frexp_LD nan_LD remquo_LD
@@ -72,6 +73,7 @@ DynaLoader::bootstrap Math::LongDouble $Math::LongDouble::VERSION;
     LDtoNV LDtoLD cmp_NV
     ld_set_prec ld_get_prec LDtoSTRP
     LD_DBL_DIG LD_LDBL_DIG LD_DBL_MANT_DIG LD_LDBL_MANT_DIG
+
     ld_max_orig_len ld_min_inter_prec ld_min_inter_base ld_max_orig_base ld_bytes
 
     llrint_LD llround_LD lrint_LD lround_LD frexp_LD nan_LD remquo_LD
@@ -160,6 +162,7 @@ sub LD_DBL_DIG       {return  _DBL_DIG()}
 sub LD_LDBL_DIG      {return _LDBL_DIG()}
 sub LD_DBL_MANT_DIG  {return  _DBL_MANT_DIG()}
 sub LD_LDBL_MANT_DIG {return _LDBL_MANT_DIG()}
+
 
 sub ld_min_inter_prec {
     die "Wrong number of args to minimum_intermediate_prec()" if @_ != 3;
