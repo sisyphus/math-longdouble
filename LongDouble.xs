@@ -1313,7 +1313,7 @@ SV * _LDBL_DIG(pTHX) {
 #ifdef LDBL_DIG
      return newSViv(LDBL_DIG);
 #else
-     return newSViv(0);
+     croak("LDBL_DIG not implemented");
 #endif
 }
 
@@ -1321,7 +1321,7 @@ SV * _DBL_DIG(pTHX) {
 #ifdef DBL_DIG
      return newSViv(DBL_DIG);
 #else
-     return newSViv(0);
+     croak("DBL_DIG not implemented");
 #endif
 }
 
@@ -1329,7 +1329,7 @@ SV * _LDBL_MANT_DIG(pTHX) {
 #ifdef LDBL_MANT_DIG
      return newSViv(LDBL_MANT_DIG);
 #else
-     return newSViv(0);
+     croak("LDBL_MANT_DIG not implemented");
 #endif
 }
 
@@ -1337,7 +1337,7 @@ SV * _DBL_MANT_DIG(pTHX) {
 #ifdef DBL_MANT_DIG
      return newSViv(DBL_MANT_DIG);
 #else
-     return newSViv(0);
+     croak("DBL_MANT_DIG not implemented");
 #endif
 }
 
