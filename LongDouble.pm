@@ -137,23 +137,11 @@ sub new {
     my $arg = shift;
     my $type = _itsa($arg);
 
-    return UVtoLD($arg) if $type == 1;    # UV
-    return IVtoLD($arg) if $type == 2;    # IV
-
-    if($type == 3) {                      # NV
-      if($arg == 0) {return NVtoLD($arg)}
-      if($arg != $arg) { #NaN
-        return NaNLD();
-      }
-      if(($arg / $arg) != 1) { # Inf
-        if($arg < 0) {return InfLD(-1)}
-        return InfLD(1);
-      }
-      return NVtoLD($arg);
-    }
-
-    return STRtoLD($arg) if $type == 4;   # PV
-    return LDtoLD ($arg) if $type == 96;  # Math::LongDouble object
+    return UVtoLD ($arg) if $type == 1;    # UV
+    return IVtoLD ($arg) if $type == 2;    # IV
+    return NVtoLD ($arg) if $type == 3;    # NV
+    return STRtoLD($arg) if $type == 4;    # PV
+    return LDtoLD ($arg) if $type == 96;   # Math::LongDouble object
 
     die "Bad argument given to new()";
 }
@@ -294,7 +282,7 @@ Math::LongDouble - perl interface to C's long double operations
     $ld = Math::LongDouble->new($arg);
      Returns a Math::LongDouble object to which the numeric value of $arg
      has been assigned.
-     If no arg is supplied then $ld will be NaN.
+     If $arg is not provided then the value of $ld will be NaN.
 
     $ld = UVtoLD($arg);
      Returns a Math::LongDouble object to which the numeric (unsigned
