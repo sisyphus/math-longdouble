@@ -4,7 +4,7 @@ use Math::LongDouble qw(:all);
 use Math::Trig;
 use Config;
 
-print "1..19\n";
+print "1..20\n";
 
 warn "\n", Math::LongDouble::_sincosl_status(), "\n";
 
@@ -92,7 +92,7 @@ if(Math::LongDouble::_sincosl_status() =~ /built with sincosl function/) {
 
 else {
   eval{sincos_LD($check1, $check2, $ldr)};
-  if($@ =~ /not implemented/) {print "ok 7\n"}
+  if($@ =~ /No sincosl function/) {print "ok 7\n"}
   else {
     warn "\$\@: $@\n";
     print "not ok 7\n";
@@ -178,6 +178,13 @@ if(approx($check1, asinh(0.6))) {print "ok 19\n"}
 else {
   warn "\nExpected asinh(0.6)\nGot $check1\n";
   print "not ok 19\n";
+}
+
+hypot_LD($check1, Math::LongDouble->new('4.0'), Math::LongDouble->new('3.0'));
+if($check1 == Math::LongDouble->new('5.0')) {print "ok 20\n"}
+else {
+  warn "\nExpected 5.0\nGot $check1\n";
+  print "not ok 20\n";
 }
 
 
