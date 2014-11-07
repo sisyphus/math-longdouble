@@ -17,6 +17,7 @@ t/new.t
 t/pod.t
 t/pow.t
 t/prec.t
+t/special.t
 t/stringification.t
 t/trig.t
 typemap
