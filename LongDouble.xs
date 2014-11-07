@@ -1574,9 +1574,18 @@ void remainder_LD(ldbl * rop, ldbl * op1, ldbl * op2) {
 }
 
 void remquo_LD(pTHX_ ldbl * rop1, SV * rop2, ldbl * op1, ldbl * op2) {
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) /* mingw.org compiler - possible remquol bug */
+  long double q, rem = remainder(*op1, *op2);
+  q = *op1 - rem;
+  q = q / *op2;
+  q = nearbyintl(q);
+  *rop1 = rem;
+  sv_setsv(rop2, newSViv((int)q));
+#else
   int ret;
   *rop1 = remquol(*op1, *op2, &ret);
   sv_setsv(rop2, newSViv(ret));
+#endif
 }
 
 void rint_LD(ldbl * rop, ldbl * op) {
@@ -1647,6 +1656,37 @@ SV * _sincosl_status(pTHX) {
 #endif
 #else
   return newSVpv("built with sincosl function", 0);
+#endif
+}
+
+int _longlong2iv_is_ok(void) {
+
+/* Is longlong to IV conversion guaranteed to not lose precision ? */
+#ifdef LONGLONG2IV_IS_OK
+  return 1;
+#else
+  return 0;
+#endif
+
+}
+
+/* Is long to IV conversion guaranteed to not lose precision ? */
+int _long2iv_is_ok(void) {
+
+#ifdef LONG2IV_IS_OK
+  return 1;
+#else
+  return 0;
+#endif
+
+}
+
+/* FLT_RADIX is probably 2, but we can use this if we need to be sure. */
+int _flt_radix(void) {
+#ifdef FLT_RADIX
+  return (int)FLT_RADIX;
+#else
+  return 0;
 #endif
 }
 
@@ -3093,5 +3133,17 @@ _sincosl_status ()
 CODE:
   RETVAL = _sincosl_status (aTHX);
 OUTPUT:  RETVAL
+
+
+int
+_longlong2iv_is_ok ()
+
+
+int
+_long2iv_is_ok ()
+
+
+int
+_flt_radix ()
 
 
