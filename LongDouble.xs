@@ -1573,19 +1573,15 @@ void remainder_LD(ldbl * rop, ldbl * op1, ldbl * op2) {
   *rop = remainderl(*op1, *op2);
 }
 
+/*
+remquo_LD seems buggy with some compilers, and is therefore not tested.
+Just wrap it, document that it's untested, and don't worry about it.
+*/
+
 void remquo_LD(pTHX_ ldbl * rop1, SV * rop2, ldbl * op1, ldbl * op2) {
-#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) /* mingw.org compiler - possible remquol bug */
-  long double q, rem = remainder(*op1, *op2);
-  q = *op1 - rem;
-  q = q / *op2;
-  q = nearbyintl(q);
-  *rop1 = rem;
-  sv_setsv(rop2, newSViv((int)q));
-#else
   int ret;
   *rop1 = remquol(*op1, *op2, &ret);
   sv_setsv(rop2, newSViv(ret));
-#endif
 }
 
 void rint_LD(ldbl * rop, ldbl * op) {
