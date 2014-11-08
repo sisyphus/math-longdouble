@@ -134,10 +134,11 @@ else {
   print "not ok 13\n";
 }
 
-log10_LD($check, NVtoLD(10));
-if($check == UnityLD(1)) {print "ok 14\n"}
+# On my PPC64 box, $check != 1.0 - therefore approx()
+log10_LD($check, NVtoLD(10.0));
+if(approx($check, NVtoLD(1.0))) {print "ok 14\n"}
 else {
-  warn "\nExpected 1\nGot $check\n";
+  warn "\nExpected ", NVtoLD(1.0), "\nGot $check\n";
   print "not ok 14\n";
 }
 
@@ -155,11 +156,11 @@ else {
   print "not ok 16\n";
 }
 
+# On my PPC64 box, $check != 81.0 - therefore approx()
 pow_LD($check, NVtoLD(3), NVtoLD(4));
-
-if($check == NVtoLD(81)) {print "ok 17\n"}
+if(approx($check, NVtoLD(81.0))) {print "ok 17\n"}
 else {
-  warn "\nExpected 82\nGot $check\n";
+  warn "\nExpected ", NVtoLD(81.0), "\nGot $check\n";
   print "not ok 17\n";
 }
 
