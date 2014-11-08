@@ -329,7 +329,9 @@ Math::LongDouble - perl interface to C's long double operations
 
    ld_set_prec($precision);
     Sets the precision of stringified values to $precision decimal
-    digits.
+    digits. Default precision is as specified by float.h's LDBL_DIG
+    (or 18 if LDBL_DIG is not defined).
+
 
    $precision = ld_get_prec();
     Returns the precision (in decimal digits) that will be used
