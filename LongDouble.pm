@@ -558,6 +558,10 @@ Math::LongDouble - perl interface to C's long double operations
 
    remquo_LD($rop1, $rop2, $op1, $op2);
     remquo($op1, $op2) is assigned to ($rop1, $rop2).
+    I find this function can return unexpected results with some
+    compilers. Therefore, this function is not tested in the test suite.
+    Use it at your own risk.
+
 
    $iv = rint_LD($op);
     rint($op) is assigned to $rop.
