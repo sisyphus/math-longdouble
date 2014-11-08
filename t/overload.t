@@ -73,7 +73,7 @@ $ok = '';
 
 # -
 
-if($zero - $uv == -$uv) {$ok .= 'a'}
+if(($zero - $uv) * -1 == $uv) {$ok .= 'a'}
 else {warn "\n3a: ", $zero - $uv, "\n"}
 
 if($zero - $iv == -$iv) {$ok .= 'b'}
@@ -256,7 +256,7 @@ $ok = '';
 # -=
 
 $zero -= $uv;
-if($zero == -$uv) {$ok .= 'a'}
+if($zero * -1 == $uv) {$ok .= 'a'}
 else {warn "\n9a: ", $zero, "\n"}
 $zero = ZeroLD(-1);
 
@@ -329,7 +329,7 @@ $ok = '';
 
 # !=
 
-$div = Math::LongDouble->new($uv) + 0.1;
+$div = Math::LongDouble->new($uv) - 1;
 if($div != $uv) {$ok .= 'a'}
 else {warn "\n11a: ", $div, "\n"}
 
@@ -434,7 +434,7 @@ $ok = '';
 
 # <
 
-$div = Math::LongDouble->new($uv) - 0.1;
+$div = Math::LongDouble->new($uv) - 1;
 if($div < $uv) {$ok .= 'a'}
 else {warn "\n14a: ", $div, "\n"}
 
@@ -536,7 +536,7 @@ $ok = '';
 
 # >
 
-$div = Math::LongDouble->new($uv) + 0.1;
+$div = Math::LongDouble->new($uv) + 1;
 if($div > $uv) {$ok .= 'a'}
 else {warn "\n17a: ", $div, "\n"}
 
@@ -571,7 +571,7 @@ $ok = '';
 
 # <=>
 
-$div = Math::LongDouble->new($uv) + 0.1;
+$div = Math::LongDouble->new($uv) + 1;
 if(($div <=> $uv) > 0) {$ok .= 'a'}
 else {warn "\n18a: ", $div, "\n"}
 
@@ -603,7 +603,7 @@ $ok = '';
 
 # <=>
 
-$div = Math::LongDouble->new($uv) - 0.1;
+$div = Math::LongDouble->new($uv) - 1;
 if(($div <=> $uv) < 0) {$ok .= 'a'}
 else {warn "\n19a: ", $div, "\n"}
 
