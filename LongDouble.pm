@@ -496,8 +496,8 @@ Math::LongDouble - perl interface to C's long double operations
     $ld = M_SQRT2l;
      Returns M_SQRT2l or sqrtl(2)) if M_SQRT2l is not defined.
 
-     $ld = M_SQRT1_2l;
-    Returns M_SQRT1_2l or 1/sqrtl(2)) if M_SQRT1_2l is not defined.
+    $ld = M_SQRT1_2l;
+     Returns M_SQRT1_2l or 1/sqrtl(2)) if M_SQRT1_2l is not defined.
 
 
 
@@ -693,7 +693,6 @@ Math::LongDouble - perl interface to C's long double operations
     I find this function can return unexpected results with some
     compilers. Therefore, this function is not tested in the test suite.
     Use it at your own risk.
-
 
    $iv = rint_LD($op);
     rint($op) is assigned to $rop.
