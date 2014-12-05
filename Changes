@@ -1,3 +1,5 @@
+ 0.10
+
  0.09
   - Work around bug on some compilers that has nan**0 is NaN.
   - Allow less stringent checking on cbrt() calculations that should return
