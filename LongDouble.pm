@@ -677,9 +677,8 @@ Math::LongDouble - perl interface to C's long double operations
 
    nan_LD($rop, $op);
     nanl($op) is assigned to $rop.
-    If Math::LOngDouble::_have_isnanl returns false, uses custom
-    (_get_nan) XSub instead. (Assumption is made that if isnanl is
-    unavailable then so is nanl.)
+    If Math::LongDouble::_have_nanl returns false, uses custom
+    (_get_nan) XSub instead.
 
    nearbyint_LD($rop, $op);
     nearbyintl($op) is assigned to $rop.
@@ -716,6 +715,8 @@ Math::LongDouble - perl interface to C's long double operations
 
    $iv = signbit_LD($op);
     signbitl($op) is assigned to $iv.
+    If Math::LongDouble::_have_signbitl returns false signbit() is
+    used instead.
 
    sincos_LD($rop1, $rop2, $op);
     sinl($op) is assigned to $rop1.
