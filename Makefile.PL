@@ -34,7 +34,7 @@ unless(defined($cc)) {
 
 my $opt = $Config{optimize};
 
-print WR "CC=$cc\nOPTMIZE = $opt\n" if $open;
+print WR "\nCC = $cc\nOPTMIZE = $opt\n" if $open;
 
 
 my $out = `$cc $opt -o try.exe -x c try.in -lm 2>&1`;
