@@ -1,4 +1,5 @@
 use ExtUtils::MakeMaker;
+use Config;
 
 
 eval {require ActivePerl::DocTools;};
@@ -31,7 +32,12 @@ unless(defined($cc)) {
   $cc = defined($Config{cc}) ? $Config{cc} : 'cc';
 }
 
-my $out = `$cc -o try.exe -x c try.in -lm 2>&1`;
+my $opt = $Config{optimize};
+
+print WR "CC=$cc\nOPTMIZE = $opt\n" if $open;
+
+
+my $out = `$cc $opt -o try.exe -x c try.in -lm 2>&1`;
 
 print WR "build output (erfl & isnanl check): $out\n" if $open;
 
@@ -61,7 +67,7 @@ if(-e 'try.exe' && !unlink('./try.exe')) {
 # Try to detect whether nanl() is available and
 # implement a workaround if it's not.
 
-my $out = `$cc -o try3.exe -x c try3.in -lm 2>&1`;
+my $out = `$cc $opt -o try3.exe -x c try3.in -lm 2>&1`;
 
 print WR "build output (nanl check): $out\n" if $open;
 
@@ -82,7 +88,7 @@ if(-e 'try3.exe' && !unlink('./try3.exe')) {
 # Try to detect a nan bug that has nan**0 is nan.
 # (Correct implementations have nan**0 == 1.)
 
-$out = `$cc -o try2.exe -x c $defines try2.in -lm 2>&1`;
+$out = `$cc $opt -o try2.exe -x c $defines try2.in -lm 2>&1`;
 
 sleep 1;
 
@@ -103,7 +109,7 @@ if(-e 'try2.exe' && !unlink('./try2.exe')) {
 # Try to detect whether signbitl() is available and
 # implement a workaround if it's not.
 
-my $out = `$cc -o try4.exe -x c try4.in -lm 2>&1`;
+my $out = `$cc $opt -o try4.exe -x c try4.in -lm 2>&1`;
 
 print WR "build output (signbitl check): $out\n" if $open;
 
