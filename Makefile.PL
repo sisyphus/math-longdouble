@@ -8,13 +8,16 @@ unless($@) {
 }
 
 my $defines = '';
+my $log = './myconfig.log';
+my $open = open WR, '>', $log;
+print "Couldn't open $log for writing: $!\n" unless $open;
 
 ###############################################
 
 # Try to detect fatal linking error with erfl() ahead of time. If we detect
 # that this linking problem exists, we then abort the Makefile.PL then
 # and there. This doesn't do anything useful beyond avoiding cpan-tester FAIL reports.
-# To avoid being subjected to the abort, just comment out line 39 below (which is "exit 0;")
+# To avoid being subjected to the abort, just comment out line 44 below (which is "exit 0;")
 
 my $cc;
 
@@ -30,12 +33,14 @@ unless(defined($cc)) {
 
 my $out = `$cc -o try.exe -x c try.in -lm 2>&1`;
 
-print "build output (erfl & isnanl check): $out\n";
+print WR "build output (erfl & isnanl check): $out\n" if $open;
 
 # No linking problem at all if try.exe exists.
 unless(-e 'try.exe') {
   if($out =~ /(`|'|"|\s)_?erfl('|`|"|\s)/) {
     print "Aborting:\n$out\n";
+    close WR if $open;
+    unlink $log if -e $log;
     exit 0; # abort the build
   }
 
@@ -58,7 +63,7 @@ if(-e 'try.exe' && !unlink('./try.exe')) {
 
 my $out = `$cc -o try3.exe -x c try3.in -lm 2>&1`;
 
-print "build output (nanl check): $out\n";
+print WR "build output (nanl check): $out\n" if $open;
 
 # No linking problem at all if try3.exe exists.
 unless(-e 'try3.exe') {
@@ -81,11 +86,11 @@ $out = `$cc -o try2.exe -x c $defines try2.in -lm 2>&1`;
 
 sleep 1;
 
-print "build output (nan**0 check):\n$out\n";
+print WR "build output (nan**0 check):\n$out\n" if $open;
 
 $diag = $^O =~ /mswin32/i ? `try2.exe 2>&1` : `./try2.exe 2>&1`;
 
-print "nan**0 check diagnostic: $diag\n" if defined $diag;
+print WR "nan**0 check diagnostic: $diag\n" if ($open && defined $diag);
 
 $defines .= ' -DNAN_POW_BUG' if $diag =~ /^NaN/i;
 
@@ -100,7 +105,7 @@ if(-e 'try2.exe' && !unlink('./try2.exe')) {
 
 my $out = `$cc -o try4.exe -x c try4.in -lm 2>&1`;
 
-print "build output (signbitl check): $out\n";
+print WR "build output (signbitl check): $out\n" if $open;
 
 # No linking problem at all if try3.exe exists.
 unless(-e 'try4.exe') {
@@ -116,6 +121,8 @@ if(-e 'try4.exe' && !unlink('./try4.exe')) {
 }
 
 ###############################################
+
+if($open) {close WR or warn "Unable to close $log after writing: $!"}
 
 # Uncomment following line to test the various workarounds - should make no difference to test results.
 #$defines .= ' -DNANL_IS_UNAVAILABLE -DISNANL_IS_UNAVAILABLE -DSIGNBITL_IS_UNAVAILABLE -DNAN_POW_BUG';
@@ -143,6 +150,7 @@ my %options = %{
   LICENSE  => 'perl',
   VERSION_FROM => 'LongDouble.pm',
   DEFINE   => $defines,
+  clean   => { FILES => '*.exe myconfig.log' },
   META_MERGE => {
    'meta-spec' => { version => 2 },
     resources => {
