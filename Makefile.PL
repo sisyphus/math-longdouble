@@ -18,7 +18,7 @@ print "Couldn't open $log for writing: $!\n" unless $open;
 # Try to detect fatal linking error with erfl() ahead of time. If we detect
 # that this linking problem exists, we then abort the Makefile.PL then
 # and there. This doesn't do anything useful beyond avoiding cpan-tester FAIL reports.
-# To avoid being subjected to the abort, just comment out line 44 below (which is "exit 0;")
+# To avoid being subjected to the abort, just comment out line 50 below (which is "exit 0;")
 
 my $cc;
 
