@@ -8,6 +8,7 @@ try.in
 try2.in
 try3.in
 try4.in
+t/01config_xtra.t
 t/aab_basic.t
 t/abs.t
 t/arith.t
