@@ -53,7 +53,7 @@ Is this being overly restrictive ? (I suspect so.)
 #define NO_SINCOSL 2
 #endif
 #endif
-
+ 
 
 typedef long double ldbl;
 
@@ -103,7 +103,7 @@ int _is_zero(pTHX_ long double x) {
     if(!strcmp(buffer, "-0")) {
       Safefree(buffer);
       return -1;
-    }
+    }   
 
     Safefree(buffer);
     return 1;
@@ -113,7 +113,7 @@ long double _get_inf(int sign) {
     long double ret;
     ret = 1.0L / 0.0L;
     if(sign < 0) ret *= -1.0L;
-    return ret;
+    return ret;    
 }
 
 long double _get_nan(void) {
@@ -377,7 +377,7 @@ SV * _overload_add(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         *ld = *(INT2PTR(long double *, SvIV(SvRV(a)))) + *(INT2PTR(long double *, SvIV(SvRV(b))));
-        return obj_ref;
+        return obj_ref; 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_add function");
     }
@@ -422,7 +422,7 @@ SV * _overload_mul(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         *ld = *(INT2PTR(long double *, SvIV(SvRV(a)))) * *(INT2PTR(long double *, SvIV(SvRV(b))));
-        return obj_ref;
+        return obj_ref; 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_mul function");
     }
@@ -470,7 +470,7 @@ SV * _overload_sub(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         *ld = *(INT2PTR(long double *, SvIV(SvRV(a)))) - *(INT2PTR(long double *, SvIV(SvRV(b))));
-        return obj_ref;
+        return obj_ref; 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_sub function");
     }
@@ -529,7 +529,7 @@ SV * _overload_div(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         *ld = *(INT2PTR(long double *, SvIV(SvRV(a)))) / *(INT2PTR(long double *, SvIV(SvRV(b))));
-        return obj_ref;
+        return obj_ref; 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_div function");
     }
@@ -562,7 +562,7 @@ SV * _overload_equiv(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         if(*(INT2PTR(long double *, SvIV(SvRV(a)))) == *(INT2PTR(long double *, SvIV(SvRV(b))))) return newSViv(1);
-        return newSViv(0);
+        return newSViv(0); 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_equiv function");
     }
@@ -595,7 +595,7 @@ SV * _overload_not_equiv(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         if(*(INT2PTR(long double *, SvIV(SvRV(a)))) == *(INT2PTR(long double *, SvIV(SvRV(b))))) return newSViv(0);
-        return newSViv(1);
+        return newSViv(1); 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_not_equiv function");
     }
@@ -606,13 +606,13 @@ SV * _overload_true(pTHX_ SV * a, SV * b, SV * third) {
 
      if(_is_nan(*(INT2PTR(long double *, SvIV(SvRV(a)))))) return newSViv(0);
      if(*(INT2PTR(long double *, SvIV(SvRV(a)))) != 0.0L) return newSViv(1);
-     return newSViv(0);
+     return newSViv(0); 
 }
 
 SV * _overload_not(pTHX_ SV * a, SV * b, SV * third) {
      if(_is_nan(*(INT2PTR(long double *, SvIV(SvRV(a)))))) return newSViv(1);
      if(*(INT2PTR(long double *, SvIV(SvRV(a)))) != 0.0L) return newSViv(0);
-     return newSViv(1);
+     return newSViv(1); 
 }
 
 SV * _overload_add_eq(pTHX_ SV * a, SV * b, SV * third) {
@@ -789,7 +789,7 @@ SV * _overload_lt(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         if(*(INT2PTR(long double *, SvIV(SvRV(a)))) < *(INT2PTR(long double *, SvIV(SvRV(b))))) return newSViv(1);
-        return newSViv(0);
+        return newSViv(0); 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_lt function");
     }
@@ -822,7 +822,7 @@ SV * _overload_gt(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         if(*(INT2PTR(long double *, SvIV(SvRV(a)))) > *(INT2PTR(long double *, SvIV(SvRV(b))))) return newSViv(1);
-        return newSViv(0);
+        return newSViv(0); 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_gt function");
     }
@@ -855,7 +855,7 @@ SV * _overload_lte(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         if(*(INT2PTR(long double *, SvIV(SvRV(a)))) <= *(INT2PTR(long double *, SvIV(SvRV(b))))) return newSViv(1);
-        return newSViv(0);
+        return newSViv(0); 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_lte function");
     }
@@ -888,7 +888,7 @@ SV * _overload_gte(pTHX_ SV * a, SV * b, SV * third) {
       const char *h = HvNAME(SvSTASH(SvRV(b)));
       if(strEQ(h, "Math::LongDouble")) {
         if(*(INT2PTR(long double *, SvIV(SvRV(a)))) >= *(INT2PTR(long double *, SvIV(SvRV(b))))) return newSViv(1);
-        return newSViv(0);
+        return newSViv(0); 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_gte function");
     }
@@ -931,7 +931,7 @@ SV * _overload_spaceship(pTHX_ SV * a, SV * b, SV * third) {
         if(*(INT2PTR(long double *, SvIV(SvRV(a)))) < *(INT2PTR(long double *, SvIV(SvRV(b))))) return newSViv(-1);
         if(*(INT2PTR(long double *, SvIV(SvRV(a)))) > *(INT2PTR(long double *, SvIV(SvRV(b))))) return newSViv(1);
         if(*(INT2PTR(long double *, SvIV(SvRV(a)))) == *(INT2PTR(long double *, SvIV(SvRV(b))))) return newSViv(0);
-        return &PL_sv_undef; /* it's a nan */
+        return &PL_sv_undef; /* it's a nan */  
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_spaceship function");
     }
@@ -952,7 +952,7 @@ SV * _overload_copy(pTHX_ SV * a, SV * b, SV * third) {
      obj = newSVrv(obj_ref, "Math::LongDouble");
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
-     return obj_ref;
+     return obj_ref; 
 }
 
 SV * LDtoLD(pTHX_ SV * a) {
@@ -974,7 +974,7 @@ SV * LDtoLD(pTHX_ SV * a) {
          SvREADONLY_on(obj);
          return obj_ref;
        }
-       croak("Invalid object supplied to Math::LongDouble::LDtoLD function");
+       croak("Invalid object supplied to Math::LongDouble::LDtoLD function"); 
      }
      croak("Invalid argument supplied to Math::LongDouble::LDtoLD function");
 }
@@ -1011,16 +1011,16 @@ SV * _overload_abs(pTHX_ SV * a, SV * b, SV * third) {
 
      *ld = *(INT2PTR(long double *, SvIV(SvRV(a))));
      if(_is_zero(aTHX_ *ld) < 0 || *ld < 0 ) *ld *= -1.0L;
-     return obj_ref;
+     return obj_ref; 
 }
 
 SV * cmp_NV(pTHX_ SV * ld_obj, SV * sv) {
      long double ld;
      NV nv;
-
+ 
      if(sv_isobject(ld_obj)) {
        const char *h = HvNAME(SvSTASH(SvRV(ld_obj)));
-       if(strEQ(h, "Math::LongDouble")) {
+       if(strEQ(h, "Math::LongDouble")) {    
          ld = *(INT2PTR(long double *, SvIV(SvRV(ld_obj))));
          nv = SvNV(sv);
 
@@ -1029,7 +1029,7 @@ SV * cmp_NV(pTHX_ SV * ld_obj, SV * sv) {
          if(ld > (long double)nv) return newSViv(1);
          return newSViv(0);
        }
-       croak("Invalid object supplied to Math::LongDouble::cmp_NV function");
+       croak("Invalid object supplied to Math::LongDouble::cmp_NV function"); 
      }
      croak("Invalid argument supplied to Math::LongDouble::cmp_NV function");
 }
@@ -1059,7 +1059,7 @@ SV * _overload_int(pTHX_ SV * a, SV * b, SV * third) {
      obj = newSVrv(obj_ref, "Math::LongDouble");
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
-     return obj_ref;
+     return obj_ref; 
 }
 
 SV * _overload_sqrt(pTHX_ SV * a, SV * b, SV * third) {
@@ -1071,12 +1071,12 @@ SV * _overload_sqrt(pTHX_ SV * a, SV * b, SV * third) {
      if(ld == NULL) croak("Failed to allocate memory in _overload_sqrt function");
 
      *ld = sqrtl(*(INT2PTR(long double *, SvIV(SvRV(a)))));
-
+ 
      obj_ref = newSV(0);
      obj = newSVrv(obj_ref, "Math::LongDouble");
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
-     return obj_ref;
+     return obj_ref; 
 }
 
 SV * _overload_log(pTHX_ SV * a, SV * b, SV * third) {
@@ -1088,13 +1088,13 @@ SV * _overload_log(pTHX_ SV * a, SV * b, SV * third) {
      if(ld == NULL) croak("Failed to allocate memory in _overload_log function");
 
      *ld = logl(*(INT2PTR(long double *, SvIV(SvRV(a)))));
-
+     
 
      obj_ref = newSV(0);
      obj = newSVrv(obj_ref, "Math::LongDouble");
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
-     return obj_ref;
+     return obj_ref; 
 }
 
 SV * _overload_exp(pTHX_ SV * a, SV * b, SV * third) {
@@ -1106,13 +1106,13 @@ SV * _overload_exp(pTHX_ SV * a, SV * b, SV * third) {
      if(ld == NULL) croak("Failed to allocate memory in _overload_exp function");
 
      *ld = expl(*(INT2PTR(long double *, SvIV(SvRV(a)))));
-
+     
 
      obj_ref = newSV(0);
      obj = newSVrv(obj_ref, "Math::LongDouble");
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
-     return obj_ref;
+     return obj_ref; 
 }
 
 SV * _overload_sin(pTHX_ SV * a, SV * b, SV * third) {
@@ -1124,13 +1124,13 @@ SV * _overload_sin(pTHX_ SV * a, SV * b, SV * third) {
      if(ld == NULL) croak("Failed to allocate memory in _overload_sin function");
 
      *ld = sinl(*(INT2PTR(long double *, SvIV(SvRV(a)))));
-
+     
 
      obj_ref = newSV(0);
      obj = newSVrv(obj_ref, "Math::LongDouble");
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
-     return obj_ref;
+     return obj_ref; 
 }
 
 SV * _overload_cos(pTHX_ SV * a, SV * b, SV * third) {
@@ -1142,13 +1142,13 @@ SV * _overload_cos(pTHX_ SV * a, SV * b, SV * third) {
      if(ld == NULL) croak("Failed to allocate memory in _overload_cos function");
 
      *ld = cosl(*(INT2PTR(long double *, SvIV(SvRV(a)))));
-
+     
 
      obj_ref = newSV(0);
      obj = newSVrv(obj_ref, "Math::LongDouble");
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
-     return obj_ref;
+     return obj_ref; 
 }
 
 SV * _overload_atan2(pTHX_ SV * a, SV * b, SV * third) {
@@ -1237,14 +1237,7 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
      if(SvUOK(b)) {
        if(third == &PL_sv_yes)
             *ld = powl((ldbl)SvUV(b), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
-       else {
-#ifdef NAN_POW_BUG
-         if(_is_nan(*(INT2PTR(ldbl *, SvIV(SvRV(a))))) && SvUV(b) == 0) *ld = 1.0L;
-         else *ld = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), (ldbl)SvUV(b));
-#else
-         *ld = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), (ldbl)SvUV(b));
-#endif
-       }
+       else *ld = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), (ldbl)SvUV(b));
        return obj_ref;
      }
 
@@ -1308,7 +1301,7 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
 #else
         *ld = powl(*(INT2PTR(long double *, SvIV(SvRV(a)))), *(INT2PTR(long double *, SvIV(SvRV(b)))));
 #endif
-        return obj_ref;
+        return obj_ref; 
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_pow function");
     }
@@ -1320,15 +1313,9 @@ SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
     SvREFCNT_inc(a);
 
     if(SvUOK(b)) {
-#ifdef NAN_POW_BUG
-       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) = _is_nan(*(INT2PTR(ldbl *, SvIV(SvRV(a))))) && SvUV(b) == 0
-                                         ? 1.0L
-                                         : powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))),
-                                                    (ldbl)SvUV(b));
-#else
        *(INT2PTR(ldbl *, SvIV(SvRV(a)))) = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))),
                                                     (ldbl)SvUV(b));
-#endif
+
         return a;
     }
 
@@ -1377,7 +1364,7 @@ SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
        const char *h = HvNAME(SvSTASH(SvRV(b)));
        if(strEQ(h, "Math::LongDouble")) {
 #ifdef NAN_POW_BUG
-       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) = _is_nan(*(INT2PTR(ldbl *, SvIV(SvRV(a))))) &&
+       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) = _is_nan(*(INT2PTR(ldbl *, SvIV(SvRV(a))))) && 
                                                    *(INT2PTR(ldbl *, SvIV(SvRV(b)))) == 0.0L
                                          ? 1.0L
                                          : powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))),
@@ -1406,7 +1393,7 @@ SV * ld_get_prec(pTHX) {
 SV * _LDBL_DIG(pTHX) {
 #ifdef LDBL_DIG
      return newSViv(LDBL_DIG);
-#else
+#else 
      croak("LDBL_DIG not implemented");
 #endif
 }
@@ -1414,7 +1401,7 @@ SV * _LDBL_DIG(pTHX) {
 SV * _DBL_DIG(pTHX) {
 #ifdef DBL_DIG
      return newSViv(DBL_DIG);
-#else
+#else 
      croak("DBL_DIG not implemented");
 #endif
 }
@@ -1422,7 +1409,7 @@ SV * _DBL_DIG(pTHX) {
 SV * _LDBL_MANT_DIG(pTHX) {
 #ifdef LDBL_MANT_DIG
      return newSViv(LDBL_MANT_DIG);
-#else
+#else 
      croak("LDBL_MANT_DIG not implemented");
 #endif
 }
@@ -1430,7 +1417,7 @@ SV * _LDBL_MANT_DIG(pTHX) {
 SV * _DBL_MANT_DIG(pTHX) {
 #ifdef DBL_MANT_DIG
      return newSViv(DBL_MANT_DIG);
-#else
+#else 
      croak("DBL_MANT_DIG not implemented");
 #endif
 }
@@ -1601,7 +1588,7 @@ SV * llrint_LD(pTHX_ ldbl * op) {
 #else
   warn("llrint_LD not implemented: IV size (%d) is smaller than longlong size (%d)\n", sizeof(IV), sizeof(long long int));
   croak("Use lrint_LD instead");
-#endif
+#endif  
 }
 
 SV * llround_LD(pTHX_ ldbl * op) {
@@ -1610,15 +1597,15 @@ SV * llround_LD(pTHX_ ldbl * op) {
 #else
   warn("llround_LD not implemented: IV size (%d) is smaller than longlong size (%d)\n", sizeof(IV), sizeof(long long int));
   croak("Use lround_LD instead");
-#endif
+#endif 
 }
 
 SV * lrint_LD(pTHX_ ldbl * op) {
 #ifdef LONG2IV_IS_OK
   return newSViv((IV)lrintl(*op));
 #else
-  croak("lrint_LD not implemented: IV size (%d) is smaller than long size (%d)", sizeof(IV), sizeof(long));
-#endif
+  croak("lrint_LD not implemented: IV size (%d) is smaller than long size (%d)", sizeof(IV), sizeof(long)); 
+#endif  
 }
 
 SV * lround_LD(pTHX_ ldbl * op) {
@@ -1648,7 +1635,7 @@ void log1p_LD(ldbl * rop, ldbl * op) {
 void modf_LD(ldbl * integer, ldbl * frac, ldbl * op) {
   ldbl ret;
   *frac = modfl(*op, &ret);
-  *integer = ret;
+  *integer = ret;     
 }
 
 void nan_LD(pTHX_ ldbl * rop, SV * op) {
@@ -2351,7 +2338,7 @@ int _have_signbitl(void) {
 #endif
 }
 
-MODULE = Math::LongDouble  PACKAGE = Math::LongDouble
+MODULE = Math::LongDouble  PACKAGE = Math::LongDouble  
 
 PROTOTYPES: DISABLE
 
@@ -2717,11 +2704,11 @@ OUTPUT:  RETVAL
 
 int
 _double_size ()
-
+		
 
 int
 _long_double_size ()
-
+		
 
 SV *
 _overload_int (a, b, third)
@@ -3814,15 +3801,15 @@ OUTPUT:  RETVAL
 
 int
 _longlong2iv_is_ok ()
-
+		
 
 int
 _long2iv_is_ok ()
-
+		
 
 int
 _flt_radix ()
-
+		
 
 SV *
 _LDBL_MAX ()
@@ -4029,17 +4016,17 @@ OUTPUT:  RETVAL
 
 int
 _nan_pow_bug ()
-
+		
 
 int
 _have_isnanl ()
-
+		
 
 int
 _have_nanl ()
-
+		
 
 int
 _have_signbitl ()
-
+		
 
