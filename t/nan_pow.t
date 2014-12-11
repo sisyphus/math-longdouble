@@ -26,7 +26,7 @@ pow_LD($rop, $ld_nan, Math::LongDouble->new(0));
 
 if($rop == 1) {print "ok 3\n"}
 else {
-  warn "\nExpected 1\nGot $rop\n";
+  warn "\nExpected 1\nGot $ld_nan ** ", Math::LongDouble->new(0), " is $rop\n";
   print "not ok 3\n";
 }
 
@@ -35,7 +35,7 @@ else {
 my $check = $ld_nan ** 0;
 if($check == 1) {print "ok 4\n"}
 else {
-  warn "\nExpected 1\nGot $check\n";
+  warn "\nExpected 1\nGot $ld_nan ** 0 is $check\n";
   print "not ok 4\n";
 }
 
@@ -44,14 +44,14 @@ else {
 $check = $ld_nan ** 0.0;
 if($check == 1) {print "ok 5\n"}
 else {
-  warn "\nExpected 1\nGot $check\n";
+  warn "\nExpected 1\nGot $ld_nan ** 0.0 is $check\n";
   print "not ok 5\n";
 }
 
 $check = $native_nan ** Math::LongDouble->new(0);
 if($check == 1) {print "ok 6\n"}
 else {
-  warn "\nExpected 1\nGot $check\n";
+  warn "\nExpected 1\nGot $native_nan ** ", Math::LongDouble->new(0), " is $check\n";
   print "not ok 6\n";
 }
 
@@ -60,7 +60,7 @@ else {
 $check = $ld_nan ** '0';
 if($check == 1) {print "ok 7\n"}
 else {
-  warn "\nExpected 1\nGot $check\n";
+  warn "\nExpected 1\nGot $ld_nan ** '0' is $check\n";
   print "not ok 7\n";
 }
 
@@ -69,7 +69,7 @@ else {
 $check = $ld_nan ** Math::LongDouble->new(0);
 if($check == 1) {print "ok 8\n"}
 else {
-  warn "\nExpected 1\nGot $check\n";
+  warn "\nExpected 1\nGot $ld_nan ** ", Math::LongDouble->new(0), " is $check\n";
   print "not ok 8\n";
 }
 
