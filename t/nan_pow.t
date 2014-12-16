@@ -70,6 +70,7 @@ $check = $ld_nan ** Math::LongDouble->new(0);
 if($check == 1) {print "ok 8\n"}
 else {
   warn "\nExpected 1\nGot $ld_nan ** ", Math::LongDouble->new(0), " is $check\n";
+  warn "Math::LongDouble->new(0) is not zero\n" unless is_ZeroLD(Math::LongDouble->new(0));
   print "not ok 8\n";
 }
 
@@ -110,5 +111,6 @@ $check **= Math::LongDouble->new(0);
 if($check == 1) {print "ok 12\n"}
 else {
   warn "\nExpected 1\nGot $check\n";
+  warn "Math::LongDouble->new(0) is not zero\n" unless is_ZeroLD(Math::LongDouble->new(0));
   print "not ok 12\n";
 }
