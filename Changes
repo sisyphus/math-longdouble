@@ -1,3 +1,5 @@
+ 0.13
+
  0.12
   - approx()imate test 3 result of pow.t if it fails initially.
   - run try.exe to check for undefined references that don't show up until
