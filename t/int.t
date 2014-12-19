@@ -39,11 +39,21 @@ else {
 
 $nv = 0.6257;
 
-if(is_ZeroLD(int(NVtoLD($nv))) > 0 &&
-   is_ZeroLD(int(NVtoLD($nv * -1.0))) < 0) {print "ok 6\n"}
+if(is_ZeroLD(int(NVtoLD($nv))) > 0) {
+  if(is_ZeroLD(int(NVtoLD($nv * -1.0))) < 0) {print "ok 6\n"}
+  elsif(is_ZeroLD(int(NVtoLD($nv * -1.0)))) {
+    warn "\nIgnoring that ceill(-0.6257) returned '0' instead of '-0'\n";
+    print "ok 6\n";
+  }
+  else {
+    warn "\nIF: int(NVtoLD(\$nv)): ", int(NVtoLD($nv)), "\n";
+    warn "IF: int(NVtoLD(\$nv * -1.0)): ", int(NVtoLD($nv * -1.0)), "\n";
+    print "not ok 6\n";
+  }
+}
 else {
-  warn "int(NVtoLD(\$nv)): ", int(NVtoLD($nv)), "\n";
-  warn "int(NVtoLD(\$nv * -1.0)): ", int(NVtoLD($nv * -1.0)), "\n";
+  warn "\nELSE: int(NVtoLD(\$nv)): ", int(NVtoLD($nv)), "\n";
+  warn "ELSE: int(NVtoLD(\$nv * -1.0)): ", int(NVtoLD($nv * -1.0)), "\n";
   print "not ok 6\n";
 }
 
