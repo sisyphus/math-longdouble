@@ -39,7 +39,7 @@ my $man = (split /e/i, LDtoSTR($tv))[0];
 if(Math::LongDouble::_LDBL_DIG() >= 18) {
   if($man eq '-1.00000000000000000') {print "ok 2\n"}
   else {
-    warn "\n2: Got: $man\n";
+    warn "\n2: Got: $man\n\$tv: $tv\n";
     print "not ok 2\n";
   }
 }
@@ -53,14 +53,14 @@ $man = (split /e/i, LDtoSTRP($tv, 19))[0];
 if(Math::LongDouble::_LDBL_DIG() == 18) {
   if($man eq '-9.999999999999999999') {print "ok 3\n"}
   else {
-    warn "\n3: Got: $man\n";
+    warn "\n3: Got: $man\nIF: \$tv: $tv\n";
     print "not ok 3\n";
   }
 }
 elsif(Math::LongDouble::_LDBL_DIG() > 18) {
   if($man eq '-1.000000000000000000') {print "ok 3\n"}
   else {
-    warn "\n3: Got: $man\n";
+    warn "\n3: Got: $man\nELSIF: \$tv: $tv\n";
     print "not ok 3\n";
   }
 }
@@ -84,7 +84,7 @@ my $len = length((split /e/i, LDtoSTR($tv))[0]);
 
 if($len == 20) {print "ok 5\n"} # 19 digits plus decimal point
 else {
-  warn "\nMant: ", (split /e/i, LDtoSTR($tv))[0], "\n";
+  warn "\nMant: ", (split /e/i, LDtoSTR($tv))[0], "\n\$tv: $tv\n";
   warn "Length: $len\n";
   print "not ok 5\n";
 }
