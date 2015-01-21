@@ -2,6 +2,13 @@ use warnings;
 use strict;
 use Math::LongDouble qw(:all);
 
+if($] < 5.008) {
+  print "1..1\n";
+  warn "\nSkipping all tests - int() is not overloaded on perl-$]\n";
+  print "ok 1\n";
+  exit 0;
+}
+
 print "1..6\n";
 
 my $nan = NaNLD();
