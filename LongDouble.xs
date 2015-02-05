@@ -219,8 +219,18 @@ int is_ZeroLD(pTHX_ SV * b) {
      croak("Invalid argument supplied to Math::LongDouble::is_ZeroLD function");
 }
 
+void _nnum_inc (char * p) {
+  int i = 0;
+  for(;;i++) {
+    if(p[i] == 0) break;
+    if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+       nnum++;
+       break;
+    }
+  }
+}
+
 SV * STRtoLD(pTHX_ char * str) {
-     int i = 0;
      long double * ld;
      SV * obj_ref, * obj;
      char * p;
@@ -233,13 +243,7 @@ SV * STRtoLD(pTHX_ char * str) {
 
      *ld = strtold(str, &p);
 
-     for(;;i++) {
-       if(p[i] == 0) break;
-       if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-         nnum++;
-         break;
-       }
-     }
+     _nnum_inc(p);
 
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
@@ -380,15 +384,8 @@ SV * _overload_add(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
        *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) + strtold(SvPV_nolen(b), &p);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return obj_ref;
     }
 
@@ -434,15 +431,8 @@ SV * _overload_mul(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
        *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) * strtold(SvPV_nolen(b), &p);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return obj_ref;
     }
 
@@ -490,16 +480,9 @@ SV * _overload_sub(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
        if(third == &PL_sv_yes) *ld = strtold(SvPV_nolen(b), &p) - *(INT2PTR(ldbl *, SvIV(SvRV(a))));
        else *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) - strtold(SvPV_nolen(b), &p);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return obj_ref;
     }
 
@@ -558,16 +541,9 @@ SV * _overload_div(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
        if(third == &PL_sv_yes) *ld = strtold(SvPV_nolen(b), &p) / *(INT2PTR(ldbl *, SvIV(SvRV(a))));
        else *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) / strtold(SvPV_nolen(b), &p);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return obj_ref;
     }
 
@@ -601,15 +577,11 @@ SV * _overload_equiv(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char *p;
-       int i = 0;
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) == strtold(SvPV_nolen(b), &p)) return newSViv(1);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) == strtold(SvPV_nolen(b), &p)) {
+         _nnum_inc(p);
+         return newSViv(1);
        }
+       _nnum_inc(p);
        return newSViv(0);
     }
 
@@ -643,15 +615,11 @@ SV * _overload_not_equiv(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) != strtold(SvPV_nolen(b), &p)) return newSViv(1);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) != strtold(SvPV_nolen(b), &p)) {
+         _nnum_inc(p);
+         return newSViv(1);
        }
+       _nnum_inc(p);
        return newSViv(0);
     }
 
@@ -700,15 +668,8 @@ SV * _overload_add_eq(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
        *(INT2PTR(ldbl *, SvIV(SvRV(a)))) += strtold(SvPV_nolen(b), &p);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return a;
     }
 
@@ -746,15 +707,8 @@ SV * _overload_mul_eq(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
        *(INT2PTR(ldbl *, SvIV(SvRV(a)))) *= strtold(SvPV_nolen(b), &p);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return a;
     }
 
@@ -792,15 +746,8 @@ SV * _overload_sub_eq(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
        *(INT2PTR(ldbl *, SvIV(SvRV(a)))) -= strtold(SvPV_nolen(b), &p);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return a;
     }
 
@@ -838,15 +785,8 @@ SV * _overload_div_eq(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
        *(INT2PTR(ldbl *, SvIV(SvRV(a)))) /= strtold(SvPV_nolen(b), &p);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return a;
     }
 
@@ -882,15 +822,11 @@ SV * _overload_lt(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) < strtold(SvPV_nolen(b), &p)) return newSViv(1);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) < strtold(SvPV_nolen(b), &p)) {
+         _nnum_inc(p);
+         return newSViv(1);
        }
+       _nnum_inc(p);
        return newSViv(0);
     }
 
@@ -924,15 +860,11 @@ SV * _overload_gt(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) > strtold(SvPV_nolen(b), &p)) return newSViv(1);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) > strtold(SvPV_nolen(b), &p)) {
+         _nnum_inc(p);
+         return newSViv(1);
        }
+       _nnum_inc(p);
        return newSViv(0);
     }
 
@@ -966,15 +898,11 @@ SV * _overload_lte(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) <= strtold(SvPV_nolen(b), &p)) return newSViv(1);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) <= strtold(SvPV_nolen(b), &p)) {
+         _nnum_inc(p);
+         return newSViv(1);
        }
+       _nnum_inc(p);
        return newSViv(0);
     }
 
@@ -1008,15 +936,11 @@ SV * _overload_gte(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) >= strtold(SvPV_nolen(b), &p)) return newSViv(1);
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) >= strtold(SvPV_nolen(b), &p)) {
+         _nnum_inc(p);
+         return newSViv(1);
        }
+       _nnum_inc(p);
        return newSViv(0);
     }
 
@@ -1056,35 +980,16 @@ SV * _overload_spaceship(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
        if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) == strtold(SvPV_nolen(b), &p)) {
-         for(;;i++) {
-           if(p[i] == 0) break;
-           if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-             nnum++;
-             break;
-           }
-         }
+         _nnum_inc(p);
          return newSViv( 0);
        }
        if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) <  strtold(SvPV_nolen(b), &p)) {
-         for(;;i++) {
-           if(p[i] == 0) break;
-           if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-             nnum++;
-             break;
-           }
-         }
+         _nnum_inc(p);
          return newSViv(-1);
        }
        if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) >  strtold(SvPV_nolen(b), &p)) {
-         for(;;i++) {
-           if(p[i] == 0) break;
-           if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-             nnum++;
-             break;
-           }
-         }
+         _nnum_inc(p);
          return newSViv( 1);
        }
        return &PL_sv_undef; /* it's a nan */
@@ -1352,17 +1257,10 @@ SV * _overload_atan2(pTHX_ SV * a, SV * b, SV * third) {
 
      if(SvPOK(b)) {
        char * p;
-       int i = 0;
        if(third == &PL_sv_yes)
             *ld = atan2l(strtold(SvPV_nolen(b), &p), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
        else *ld = atan2l(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), strtold(SvPV_nolen(b), &p));
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return obj_ref;
      }
 
@@ -1449,11 +1347,10 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
 
      if(SvPOK(b)) {
        char * p;
-       int i = 0;
 #ifdef NAN_POW_BUG
        if(third == &PL_sv_yes) {
          if(_is_nan(strtold(SvPV_nolen(b), &p)) && *(INT2PTR(ldbl *, SvIV(SvRV(a)))) == 0.0L) *ld = 1.0L;
-         else *ld = powl(strtold(SvPV_nolen(b), &pL), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
+         else *ld = powl(strtold(SvPV_nolen(b), &p), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
        }
        else {
          if(_is_nan(*(INT2PTR(ldbl *, SvIV(SvRV(a))))) && strtold(SvPV_nolen(b), &p) == 0.0L) *ld = 1.0L;
@@ -1464,13 +1361,7 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
             *ld = powl(strtold(SvPV_nolen(b), &p), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
        else *ld = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), strtold(SvPV_nolen(b), &p));
 #endif
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return obj_ref;
      }
 
@@ -1531,7 +1422,6 @@ SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
 
     if(SvPOK(b)) {
        char * p;
-       int i = 0;
 #ifdef NAN_POW_BUG
        *(INT2PTR(ldbl *, SvIV(SvRV(a)))) = _is_nan(*(INT2PTR(ldbl *, SvIV(SvRV(a))))) &&
                                            strtold(SvPV_nolen(b), &p) == 0.0L
@@ -1542,13 +1432,7 @@ SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
        *(INT2PTR(ldbl *, SvIV(SvRV(a)))) = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))),
                                                     strtold(SvPV_nolen(b), &p));
 #endif
-       for(;;i++) {
-         if(p[i] == 0) break;
-         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
-           nnum++;
-           break;
-         }
-       }
+       _nnum_inc(p);
        return a;
     }
 
@@ -2633,6 +2517,22 @@ is_ZeroLD (b)
 CODE:
   RETVAL = is_ZeroLD (aTHX_ b);
 OUTPUT:  RETVAL
+
+void
+_nnum_inc (p)
+	char *	p
+        PREINIT:
+        I32* temp;
+        PPCODE:
+        temp = PL_markstack_ptr++;
+        _nnum_inc(p);
+        if (PL_markstack_ptr != temp) {
+          /* truly void, because dXSARGS not invoked */
+          PL_markstack_ptr = temp;
+          XSRETURN_EMPTY; /* return empty stack */
+        }
+        /* must have used dXSARGS; list context implied */
+        return; /* assume stack size is correct */
 
 SV *
 STRtoLD (str)
