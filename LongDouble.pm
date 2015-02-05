@@ -284,9 +284,19 @@ Math::LongDouble - perl interface to C's long double operations
 
    This behaviour has changed from 0.06 and earlier.
 
+   A number of the functions below accept string arguments. These arguments
+   having been handed to strtold() will be checked for the presence of
+   non-numeric characters. If any such non-numeric characters are detected,
+   then the global non-numeric flag (which is initially set to 0) will be
+   incremented.
+   You can query the value held by the global non-numeric flag by running
+   Math::Float128::nnumflag() and you can manually alter the value of this
+   global using Math::Float128::set_nnum and Math::Float128::clear_nnum.
+   These functions are documented below.
+
    NOTE:
     Math::LongDouble->new(32.1) != Math::LongDouble->new('32.1')
-    unless $Config{nvtype} reports long double. The same holds
+    unless $Config{nvtype} reports 'long double'. The same holds
     for many (but not all) numeric values. In general, it's not
     always true (and is often untrue) that
     Math::LongDouble->new($n) == Math::LongDouble->new("$n")
@@ -745,6 +755,22 @@ Math::LongDouble - perl interface to C's long double operations
 
 
 =head1 OTHER FUNCTIONS
+
+   $iv = Math::LongDouble::nnumflag(); # not exported
+    Returns the value of the non-numeric flag. This flag is
+    initialized to zero, but incemented by 1 whenever a function
+    is handed a string containing non-numeric characters. The
+    value of the flag therefore tells us how many times functions
+    have been handed such a string. The flag can be reset to 0 by
+    running Math::LongDouble::clear_nnum().
+
+   Math::LongDouble::set_nnum($iv); # not exported
+    Resets the global non-numeric flag to the value specified by
+    $iv.
+
+   Math::LongDouble::clear_nnum(); # not exported
+    Resets the global non-numeric flag to 0.(Essentially the same
+    as running Math::LongDouble::set_nnum(0).)
 
    $bool = is_NaNLD($ld);
     Returns 1 if $ld is a Math::LongDouble NaN.
