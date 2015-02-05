@@ -4,6 +4,8 @@
     stating that we got '0' instead of the expected '-0'.
   - add some more diagnostics to tests 2, 3 and 5 of t/prec.t in an attempt to
     find out why one (or more ?) of chorny's smokers fails those tests.
+  - Add nnumflag(), set_nnum() and clear_nnum() functions. Also check for
+    non-numeric strings handed to strtold().
 
  0.12
   - approx()imate test 3 result of pow.t if it fails initially.
