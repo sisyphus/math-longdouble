@@ -21,6 +21,7 @@ t/int.t
 t/log_exp.t
 t/new.t
 t/nan_pow.t
+t/nnum.t
 t/overload.t
 t/pod.t
 t/pow.t
