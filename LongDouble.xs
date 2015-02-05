@@ -70,6 +70,7 @@ void _print_bytes(const void* p, int n) {
   printf("\n");
 }
 
+int nnum = 0;
 
 void ld_set_prec(pTHX_ int x) {
     if(x < 1)croak("1st arg (precision) to ld_set_prec must be at least 1");
@@ -219,9 +220,10 @@ int is_ZeroLD(pTHX_ SV * b) {
 }
 
 SV * STRtoLD(pTHX_ char * str) {
+     int i = 0;
      long double * ld;
      SV * obj_ref, * obj;
-     char * ptr;
+     char * p;
 
      Newx(ld, 1, long double);
      if(ld == NULL) croak("Failed to allocate memory in STRtoLD function");
@@ -229,7 +231,15 @@ SV * STRtoLD(pTHX_ char * str) {
      obj_ref = newSV(0);
      obj = newSVrv(obj_ref, "Math::LongDouble");
 
-     *ld = strtold(str, &ptr);
+     *ld = strtold(str, &p);
+
+     for(;;i++) {
+       if(p[i] == 0) break;
+       if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+         nnum++;
+         break;
+       }
+     }
 
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
@@ -369,8 +379,17 @@ SV * _overload_add(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) + strtold(SvPV_nolen(b), NULL);
-        return obj_ref;
+       char * p;
+       int i = 0;
+       *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) + strtold(SvPV_nolen(b), &p);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return obj_ref;
     }
 
     if(sv_isobject(b)) {
@@ -414,8 +433,17 @@ SV * _overload_mul(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) * strtold(SvPV_nolen(b), NULL);
-        return obj_ref;
+       char * p;
+       int i = 0;
+       *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) * strtold(SvPV_nolen(b), &p);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return obj_ref;
     }
 
     if(sv_isobject(b)) {
@@ -461,8 +489,17 @@ SV * _overload_sub(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       if(third == &PL_sv_yes) *ld = strtold(SvPV_nolen(b), NULL) - *(INT2PTR(ldbl *, SvIV(SvRV(a))));
-       else *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) - strtold(SvPV_nolen(b), NULL);
+       char * p;
+       int i = 0;
+       if(third == &PL_sv_yes) *ld = strtold(SvPV_nolen(b), &p) - *(INT2PTR(ldbl *, SvIV(SvRV(a))));
+       else *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) - strtold(SvPV_nolen(b), &p);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
        return obj_ref;
     }
 
@@ -520,8 +557,17 @@ SV * _overload_div(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       if(third == &PL_sv_yes) *ld = strtold(SvPV_nolen(b), NULL) / *(INT2PTR(ldbl *, SvIV(SvRV(a))));
-       else *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) / strtold(SvPV_nolen(b), NULL);
+       char * p;
+       int i = 0;
+       if(third == &PL_sv_yes) *ld = strtold(SvPV_nolen(b), &p) / *(INT2PTR(ldbl *, SvIV(SvRV(a))));
+       else *ld = *(INT2PTR(ldbl *, SvIV(SvRV(a)))) / strtold(SvPV_nolen(b), &p);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
        return obj_ref;
     }
 
@@ -554,8 +600,17 @@ SV * _overload_equiv(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) == strtold(SvPV_nolen(b), NULL)) return newSViv(1);
-        return newSViv(0);
+       char *p;
+       int i = 0;
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) == strtold(SvPV_nolen(b), &p)) return newSViv(1);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return newSViv(0);
     }
 
     if(sv_isobject(b)) {
@@ -587,8 +642,17 @@ SV * _overload_not_equiv(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) != strtold(SvPV_nolen(b), NULL)) return newSViv(1);
-        return newSViv(0);
+       char * p;
+       int i = 0;
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) != strtold(SvPV_nolen(b), &p)) return newSViv(1);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return newSViv(0);
     }
 
     if(sv_isobject(b)) {
@@ -635,8 +699,17 @@ SV * _overload_add_eq(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) += strtold(SvPV_nolen(b), NULL);
-        return a;
+       char * p;
+       int i = 0;
+       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) += strtold(SvPV_nolen(b), &p);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return a;
     }
 
     if(sv_isobject(b)) {
@@ -672,8 +745,17 @@ SV * _overload_mul_eq(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) *= strtold(SvPV_nolen(b), NULL);
-        return a;
+       char * p;
+       int i = 0;
+       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) *= strtold(SvPV_nolen(b), &p);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return a;
     }
 
     if(sv_isobject(b)) {
@@ -709,8 +791,17 @@ SV * _overload_sub_eq(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) -= strtold(SvPV_nolen(b), NULL);
-        return a;
+       char * p;
+       int i = 0;
+       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) -= strtold(SvPV_nolen(b), &p);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return a;
     }
 
     if(sv_isobject(b)) {
@@ -746,8 +837,17 @@ SV * _overload_div_eq(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) /= strtold(SvPV_nolen(b), NULL);
-        return a;
+       char * p;
+       int i = 0;
+       *(INT2PTR(ldbl *, SvIV(SvRV(a)))) /= strtold(SvPV_nolen(b), &p);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return a;
     }
 
     if(sv_isobject(b)) {
@@ -781,8 +881,17 @@ SV * _overload_lt(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) < strtold(SvPV_nolen(b), NULL)) return newSViv(1);
-        return newSViv(0);
+       char * p;
+       int i = 0;
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) < strtold(SvPV_nolen(b), &p)) return newSViv(1);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return newSViv(0);
     }
 
     if(sv_isobject(b)) {
@@ -814,8 +923,17 @@ SV * _overload_gt(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) > strtold(SvPV_nolen(b), NULL)) return newSViv(1);
-        return newSViv(0);
+       char * p;
+       int i = 0;
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) > strtold(SvPV_nolen(b), &p)) return newSViv(1);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return newSViv(0);
     }
 
     if(sv_isobject(b)) {
@@ -847,8 +965,17 @@ SV * _overload_lte(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) <= strtold(SvPV_nolen(b), NULL)) return newSViv(1);
-        return newSViv(0);
+       char * p;
+       int i = 0;
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) <= strtold(SvPV_nolen(b), &p)) return newSViv(1);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return newSViv(0);
     }
 
     if(sv_isobject(b)) {
@@ -880,8 +1007,17 @@ SV * _overload_gte(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) >= strtold(SvPV_nolen(b), NULL)) return newSViv(1);
-        return newSViv(0);
+       char * p;
+       int i = 0;
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) >= strtold(SvPV_nolen(b), &p)) return newSViv(1);
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return newSViv(0);
     }
 
     if(sv_isobject(b)) {
@@ -919,9 +1055,38 @@ SV * _overload_spaceship(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) == strtold(SvPV_nolen(b), NULL)) return newSViv( 0);
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) <  strtold(SvPV_nolen(b), NULL)) return newSViv(-1);
-       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) >  strtold(SvPV_nolen(b), NULL)) return newSViv( 1);
+       char * p;
+       int i = 0;
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) == strtold(SvPV_nolen(b), &p)) {
+         for(;;i++) {
+           if(p[i] == 0) break;
+           if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+             nnum++;
+             break;
+           }
+         }
+         return newSViv( 0);
+       }
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) <  strtold(SvPV_nolen(b), &p)) {
+         for(;;i++) {
+           if(p[i] == 0) break;
+           if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+             nnum++;
+             break;
+           }
+         }
+         return newSViv(-1);
+       }
+       if(*(INT2PTR(ldbl *, SvIV(SvRV(a)))) >  strtold(SvPV_nolen(b), &p)) {
+         for(;;i++) {
+           if(p[i] == 0) break;
+           if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+             nnum++;
+             break;
+           }
+         }
+         return newSViv( 1);
+       }
        return &PL_sv_undef; /* it's a nan */
     }
 
@@ -1186,9 +1351,18 @@ SV * _overload_atan2(pTHX_ SV * a, SV * b, SV * third) {
      }
 
      if(SvPOK(b)) {
+       char * p;
+       int i = 0;
        if(third == &PL_sv_yes)
-            *ld = atan2l(strtold(SvPV_nolen(b), NULL), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
-       else *ld = atan2l(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), strtold(SvPV_nolen(b), NULL));
+            *ld = atan2l(strtold(SvPV_nolen(b), &p), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
+       else *ld = atan2l(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), strtold(SvPV_nolen(b), &p));
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
        return obj_ref;
      }
 
@@ -1274,20 +1448,29 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
      }
 
      if(SvPOK(b)) {
+       char * p;
+       int i = 0;
 #ifdef NAN_POW_BUG
        if(third == &PL_sv_yes) {
-         if(_is_nan(strtold(SvPV_nolen(b), NULL)) && *(INT2PTR(ldbl *, SvIV(SvRV(a)))) == 0.0L) *ld = 1.0L;
-         else *ld = powl(strtold(SvPV_nolen(b), NULL), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
+         if(_is_nan(strtold(SvPV_nolen(b), &p)) && *(INT2PTR(ldbl *, SvIV(SvRV(a)))) == 0.0L) *ld = 1.0L;
+         else *ld = powl(strtold(SvPV_nolen(b), &pL), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
        }
        else {
-         if(_is_nan(*(INT2PTR(ldbl *, SvIV(SvRV(a))))) && strtold(SvPV_nolen(b), NULL) == 0.0L) *ld = 1.0L;
-         else *ld = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), strtold(SvPV_nolen(b), NULL));
+         if(_is_nan(*(INT2PTR(ldbl *, SvIV(SvRV(a))))) && strtold(SvPV_nolen(b), &p) == 0.0L) *ld = 1.0L;
+         else *ld = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), strtold(SvPV_nolen(b), &p));
        }
 #else
        if(third == &PL_sv_yes)
-            *ld = powl(strtold(SvPV_nolen(b), NULL), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
-       else *ld = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), strtold(SvPV_nolen(b), NULL));
+            *ld = powl(strtold(SvPV_nolen(b), &p), *(INT2PTR(ldbl *, SvIV(SvRV(a)))));
+       else *ld = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))), strtold(SvPV_nolen(b), &p));
 #endif
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
        return obj_ref;
      }
 
@@ -1347,17 +1530,26 @@ SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvPOK(b)) {
+       char * p;
+       int i = 0;
 #ifdef NAN_POW_BUG
        *(INT2PTR(ldbl *, SvIV(SvRV(a)))) = _is_nan(*(INT2PTR(ldbl *, SvIV(SvRV(a))))) &&
-                                           strtold(SvPV_nolen(b), NULL) == 0.0L
+                                           strtold(SvPV_nolen(b), &p) == 0.0L
                                          ? 1.0L
                                          : powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))),
-                                                    strtold(SvPV_nolen(b), NULL));
+                                                    strtold(SvPV_nolen(b), &p));
 #else
        *(INT2PTR(ldbl *, SvIV(SvRV(a)))) = powl(*(INT2PTR(ldbl *, SvIV(SvRV(a)))),
-                                                    strtold(SvPV_nolen(b), NULL));
+                                                    strtold(SvPV_nolen(b), &p));
 #endif
-        return a;
+       for(;;i++) {
+         if(p[i] == 0) break;
+         if(p[i] != ' ' && p[i] != '\t' && p[i] != '\n' && p[i] != '\r' && p[i] != '\f') {
+           nnum++;
+           break;
+         }
+       }
+       return a;
     }
 
     if(sv_isobject(b)) {
@@ -2336,6 +2528,23 @@ int _have_signbitl(void) {
 #else
   return 1;
 #endif
+}
+
+int nnumflag(void) {
+  return nnum;
+}
+
+void clear_nnum(void) {
+  nnum = 0;
+}
+
+void set_nnum(int x) {
+  nnum = x;
+}
+
+int _lln(pTHX_ SV * x) {
+  if(looks_like_number(x)) return 1;
+  return 0;
 }
 
 MODULE = Math::LongDouble  PACKAGE = Math::LongDouble
@@ -4029,4 +4238,47 @@ _have_nanl ()
 int
 _have_signbitl ()
 
+
+int
+nnumflag ()
+
+
+void
+clear_nnum ()
+
+        PREINIT:
+        I32* temp;
+        PPCODE:
+        temp = PL_markstack_ptr++;
+        clear_nnum();
+        if (PL_markstack_ptr != temp) {
+          /* truly void, because dXSARGS not invoked */
+          PL_markstack_ptr = temp;
+          XSRETURN_EMPTY; /* return empty stack */
+        }
+        /* must have used dXSARGS; list context implied */
+        return; /* assume stack size is correct */
+
+void
+set_nnum (x)
+	int	x
+        PREINIT:
+        I32* temp;
+        PPCODE:
+        temp = PL_markstack_ptr++;
+        set_nnum(x);
+        if (PL_markstack_ptr != temp) {
+          /* truly void, because dXSARGS not invoked */
+          PL_markstack_ptr = temp;
+          XSRETURN_EMPTY; /* return empty stack */
+        }
+        /* must have used dXSARGS; list context implied */
+        return; /* assume stack size is correct */
+
+int
+_lln (x)
+	SV *	x
+CODE:
+  RETVAL = _lln (aTHX_ x);
+OUTPUT:  RETVAL
 
