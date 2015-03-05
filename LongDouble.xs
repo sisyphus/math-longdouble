@@ -92,22 +92,40 @@ int  _is_inf(long double x) {
      return 0; /* Finite Real */
 }
 
-int _is_zero(pTHX_ long double x) {
-    char * buffer;
+/* Replaced */
+/*
+//int _is_zero(long double x) {
+//    char * buffer;
+//
+//    if(x != 0.0L) return 0;
+//
+//    Newx(buffer, 2, char);
+//
+//    sprintf(buffer, "%.0Lf", x);
+//
+//    if(!strcmp(buffer, "-0")) {
+//      Safefree(buffer);
+//      return -1;
+//    }
+//
+//    Safefree(buffer);
+//    return 1;
+//}
+*/
 
-    if(x != 0.0L) return 0;
+int _is_zero(long double x) {
 
-    Newx(buffer, 2, char);
+  int n = sizeof(long double);
+  void * p = &x;
 
-    sprintf(buffer, "%.0Lf", x);
+  if(x != 0.0L) return 0;
 
-    if(!strcmp(buffer, "-0")) {
-      Safefree(buffer);
-      return -1;
-    }
-
-    Safefree(buffer);
-    return 1;
+#ifdef WE_HAVE_BENDIAN /* Big Endian architecture */
+  if(((unsigned char*)p)[0] >= 128) return -1;
+#else
+  if(((unsigned char*)p)[n - 1] >= 128) return -1;
+#endif
+  return 1;
 }
 
 long double _get_inf(int sign) {
@@ -214,7 +232,7 @@ int is_ZeroLD(pTHX_ SV * b) {
      if(sv_isobject(b)) {
        const char *h = HvNAME(SvSTASH(SvRV(b)));
        if(strEQ(h, "Math::LongDouble"))
-         return _is_zero(aTHX_ *(INT2PTR(long double *, SvIV(SvRV(b)))));
+         return _is_zero(*(INT2PTR(long double *, SvIV(SvRV(b)))));
      }
      croak("Invalid argument supplied to Math::LongDouble::is_ZeroLD function");
 }
@@ -1080,7 +1098,7 @@ SV * _overload_abs(pTHX_ SV * a, SV * b, SV * third) {
      SvREADONLY_on(obj);
 
      *ld = *(INT2PTR(long double *, SvIV(SvRV(a))));
-     if(_is_zero(aTHX_ *ld) < 0 || *ld < 0 ) *ld *= -1.0L;
+     if(_is_zero(*ld) < 0 || *ld < 0 ) *ld *= -1.0L;
      return obj_ref;
 }
 
