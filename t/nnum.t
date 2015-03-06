@@ -53,22 +53,26 @@ else {
   print "not ok 5\n";
 }
 
+my $n = nnf();
+
 $rop = Math::LongDouble->new('0XB');
 
-if(($rop == 11 && nnf() == 1)
+if(($rop == 11 && nnf() == $n)
            ||
-   ($rop == 0  && nnf() == 2)) {print "ok 6\n"}
+   ($rop == 0  && nnf() == $n + 1)) {print "ok 6\n"}
 else {
   warn "\n\$rop: $rop\n";
   warn "nnumflag(): ", nnf(), "\n";
   print "not ok 6\n";
 }
 
+Math::LongDouble::clear_nnum();
+
 $rop = Math::LongDouble->new('011');
 
-if($rop == 11 && nnf() == 1) {print "ok 7\n"}
+if($rop == 11 && nnf() == 0) {print "ok 7\n"}
 else {
   warn "\nExpected 11, got $rop\n";
-  warn "nnumflag() expected 3, got ", nnf(), "\n";
+  warn "nnumflag() expected 0, got ", nnf(), "\n";
   print "not ok 7\n";
 }
