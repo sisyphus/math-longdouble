@@ -1,4 +1,6 @@
  0.13
+  - runtime version 4 modfl() segfaults, so we introduce our own rendition of modfl()
+    if that runtime is in place. See http://sourceforge.net/p/mingw-w64/bugs/478/
   - if test 6 of t/int.t reports that overloaded int(-0.6257) returns 0 instead
     of -0, we no longer record that as "not ok". We do however emit a message
     stating that we got '0' instead of the expected '-0'.
