@@ -1728,8 +1728,14 @@ void log1p_LD(ldbl * rop, ldbl * op) {
 
 void modf_LD(ldbl * integer, ldbl * frac, ldbl * op) {
   ldbl ret;
+#if defined(__MINGW64_VERSION_MAJOR) && __MINGW64_VERSION_MAJOR == 4 /* http://sourceforge.net/p/mingw-w64/bugs/478/ */
+  if(*op < 0.0L)  *integer = ceill(*op);
+  else            *integer = floorl(*op);
+  *frac = *op - *integer;
+#else
   *frac = modfl(*op, &ret);
   *integer = ret;
+#endif
 }
 
 void nan_LD(pTHX_ ldbl * rop, SV * op) {
