@@ -45,8 +45,8 @@ int _DIGITS = 18;
 
 /*
 None of my mingw.org compilers provide the sincosl function, so
-I exclude that function when those compilers are in use.
-Is this being overly restrictive ? (I suspect so.)
+I include my own implementation of that function when those compilers
+are in use.
 */
 #if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) /* mingw.org compiler */
 #ifndef NO_SINCOSL
@@ -1804,7 +1804,8 @@ int signbit_LD(ldbl * op) {
 
 void sincos_LD(ldbl * sin, ldbl * cos, ldbl * op) {
 #ifdef NO_SINCOSL
-  croak("No sincosl function for this build of Math::LongDouble (%u)", NO_SINCOSL);
+  *sin = sinl(*op);
+  *cos = cosl(*op);
 #else
   ldbl sine, cosine;
   sincosl(*op, &sine, &cosine);
@@ -1844,9 +1845,9 @@ void trunc_LD(ldbl * rop, ldbl * op) {
 SV * _sincosl_status(pTHX) {
 #ifdef NO_SINCOSL
 #if NO_SINCOSL == 1
-  return newSVpv("built without sincosl function - old compiler (1)", 0);
+  return newSVpv("using own implementation of sincosl function - old compiler (1)", 0);
 #else
-  return newSVpv("built without sincosl function - mingw.org compiler (2)", 0);
+  return newSVpv("using own implementation of sincosl function - mingw.org compiler (2)", 0);
 #endif
 #else
   return newSVpv("built with sincosl function", 0);
