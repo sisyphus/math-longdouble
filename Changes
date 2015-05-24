@@ -1,3 +1,5 @@
+ 0.14
+
  0.13
   - add implementation of sincosl(), for use when that function is not available.
   - runtime version 4 modfl() segfaults, so we introduce our own rendition of modfl()
