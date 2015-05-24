@@ -55,7 +55,7 @@ use subs qw(
             M_1_PIl M_2_PIl  M_2_SQRTPIl M_SQRT2l M_SQRT1_2l
             );
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 #$VERSION = eval $VERSION;
 
 DynaLoader::bootstrap Math::LongDouble $Math::LongDouble::VERSION;
@@ -289,6 +289,8 @@ Math::LongDouble - perl interface to C's long double operations
    non-numeric characters. If any such non-numeric characters are detected,
    then the global non-numeric flag (which is initially set to 0) will be
    incremented.
+   Neither leading nor trailing whitespace is deemed non-numeric, but any
+   other (ie internal) whitespace *is* regarded as non-numeric.
    You can query the value held by the global non-numeric flag by running
    Math::Float128::nnumflag() and you can manually alter the value of this
    global using Math::Float128::set_nnum and Math::Float128::clear_nnum.
