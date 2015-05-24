@@ -63,41 +63,28 @@ my $check1 = Math::LongDouble->new();
 my $check2 = Math::LongDouble->new();
 my $check3 = Math::LongDouble->new();
 
-if(Math::LongDouble::_sincosl_status() =~ /built with sincosl function/) {
-  sincos_LD($check1, $check2, $ldr);
-  #print "$check1 $check2\n";
-  sin_LD($check3, $ldr);
+sincos_LD($check1, $check2, $ldr);
+#print "$check1 $check2\n";
+sin_LD($check3, $ldr);
 
-  if($check1 == $check3) {print "ok 7\n"}
-  else {
-    warn "\nExpected$check3\nGot $check1\n";
-    print "not ok 7\n";
-  }
-
-  cos_LD($check3, $ldr);
-
-  if($check2 == $check3) {print "ok 8\n"}
-  else {
-    warn "\nExpected$check3\nGot $check2\n";
-    print "not ok 8\n";
-  }
-
-  if(approx(($check1 ** 2) + ($check2 ** 2), 1)) {print "ok 9\n"}
-  else {
-    warn "\nExpected approx 1\nGot ", ($check1 ** 2) + ($check2 ** 2), "\n";
-    print "not ok 9\n";
-  }
-
+if($check1 == $check3) {print "ok 7\n"}
+else {
+  warn "\nExpected$check3\nGot $check1\n";
+  print "not ok 7\n";
 }
 
+cos_LD($check3, $ldr);
+
+if($check2 == $check3) {print "ok 8\n"}
 else {
-  eval{sincos_LD($check1, $check2, $ldr)};
-  if($@ =~ /No sincosl function/) {print "ok 7\n"}
-  else {
-    warn "\$\@: $@\n";
-    print "not ok 7\n";
-  }
-  print "ok 8\nok 9\n";
+  warn "\nExpected$check3\nGot $check2\n";
+  print "not ok 8\n";
+}
+
+if(approx(($check1 ** 2) + ($check2 ** 2), 1)) {print "ok 9\n"}
+else {
+  warn "\nExpected approx 1\nGot ", ($check1 ** 2) + ($check2 ** 2), "\n";
+  print "not ok 9\n";
 }
 
 sinh_LD($check1, $ldr);
