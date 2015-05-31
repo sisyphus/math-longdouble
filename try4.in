@@ -11,6 +11,8 @@ int main(void) {
 
  ret = signbitl(op);
 
+ if(!ret) printf("ret set as expected\n");
+
  return 0;
 }
 
