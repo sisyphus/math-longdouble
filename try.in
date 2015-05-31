@@ -12,6 +12,9 @@ int main(void) {
  rop = erfl(op);
  ret = isnanl(op);
 
+ if(rop > 0.6038L && rop < 0.6039L) printf("rop is set to a sane value\n");
+ if(!ret) printf("op is set to the correct value\n");
+
  return 0;
 }
 
