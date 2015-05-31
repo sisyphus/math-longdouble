@@ -1,4 +1,7 @@
  0.14
+  - 0.13 failed to pick when Bingos' BSD machines were going to choke on erfl() - so
+    I've rewritten try.in so that it actually outputs something.
+  - Change try3.in and try4.in to actually output something.
 
  0.13
   - add implementation of sincosl(), for use when that function is not available.
