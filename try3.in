@@ -10,6 +10,8 @@ int main(void) {
 
  rop = nanl("0");
 
+ if(rop != rop) printf("rop set as expected\n");
+
  return 0;
 }
 
