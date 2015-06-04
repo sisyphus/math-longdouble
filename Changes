@@ -1,4 +1,7 @@
  0.15
+  - Another rewrite of try.in aimed at eliminating the continuing
+    FAIL reports from Bingos' NetBSD machines.
+  - Rewrite try2.in to avoid constants.
 
  0.14
   - 0.13 failed to pick when Bingos' BSD machines were going to choke on erfl() - so
