@@ -61,7 +61,7 @@ unless(-e 'try.exe') {
 
 # But now we need to see whether the linking problem doesn't show up until runtime.
 else {
-  my $diag = $^O =~ /mswin32/i ? `try.exe 2>&1` : `./try.exe 2>&1`;
+  my $diag = $^O =~ /mswin32/i ? `try.exe 0.6 2>&1` : `./try.exe 0.6 2>&1`;
   print WR "erfl & isnanl check (run): $diag\n" if $open;
   if($diag =~ /(`|'|"|\s)_?erfl('|`|"|\s)/) {
     print "Aborting:\n$diag\n";
@@ -114,7 +114,7 @@ sleep 1;
 
 print WR "build output (nan**0 check):\n$out\n" if $open;
 
-$diag = $^O =~ /mswin32/i ? `try2.exe 2>&1` : `./try2.exe 2>&1`;
+$diag = $^O =~ /mswin32/i ? `try2.exe nan 0 2>&1` : `./try2.exe nan 0 2>&1`;
 
 print WR "nan**0 check diagnostic: $diag\n" if ($open && defined $diag);
 
