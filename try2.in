@@ -9,28 +9,23 @@ Check whether NaN ** 0 == 1.
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
-int main(void) {
- long double check, rop, op3, op1 = 1.0L, op2 = 0.0L;
+int main(int argc, char *argv[]) {
+ long double rop, op, check;
 
-#if !defined(NANL_IS_UNAVAILABLE)
- rop = nanl("0");
-#else
- op3 = op1 / op2;
- rop = (op3) / (op1/op2);
-#endif
+ rop = strtold(argv[1], NULL);
+ op =  strtold(argv[2], NULL);
 
- if(rop == rop) printf("rop should be NaN but rop == rop\n");
 
+ if(rop == rop) printf("rop should be 'not a number' but rop == rop\n");
+
+ check = powl(rop, op);
+ if(check == 1.0L) printf("1.0L\n");
  else {
-   rop /= 2.1L;
-   check = powl(rop, op2 * 3.6L);
-   if(check == 1.0L) printf("1.0L\n");
-   else {
-     if(check != check) printf("NaN\n");
-     else printf("%Le\n", rop);
-   }
+   if(check != check) printf("NaN\n");
+   else printf("%Le\n", check);
  }
 
  return 0;
