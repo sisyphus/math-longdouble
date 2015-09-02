@@ -1,4 +1,5 @@
  0.16
+  - Improve the workaround for the __MINGW64__ modfl bug.
 
  0.15
   - Another rewrite of try.in aimed at eliminating the continuing
