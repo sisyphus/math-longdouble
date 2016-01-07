@@ -2,6 +2,7 @@
 
 use warnings;
 use strict;
+use POSIX qw(ceil);
 use Math::LongDouble qw(:all);
 
 my $tests = 7;
@@ -9,8 +10,12 @@ print "1..$tests\n";
 
 my $tv = STRtoLD('-1e-37');
 
-my $init_prec = Math::LongDouble::_LDBL_DIG() ? Math::LongDouble::_LDBL_DIG()
-                                              : 18;
+my $p = Math::LongDouble::_LDBL_MANT_DIG()
+           ? Math::LongDouble::_LDBL_MANT_DIG()
+           :  Math::LongDouble::_DBL_MANT_DIG() ? Math::LongDouble::_DBL_MANT_DIG()
+                                                : 64;
+
+my $init_prec = 1 + ceil($p * log(2) / log(10));
 
 warn "\nFYI:\n DBL_DIG = ", LD_DBL_DIG, "\n LDBL_DIG = ", LD_LDBL_DIG, "\n Default precison = $init_prec\n";
 
