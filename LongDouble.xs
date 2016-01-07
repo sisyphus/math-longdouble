@@ -23,11 +23,32 @@
 #  define Newx(v,n,t) New(0,v,n,t)
 #endif
 
-#ifdef LDBL_DIG
-int _DIGITS = LDBL_DIG;
-#else
-int _DIGITS = 18;
+#if defined(LDBL_MANT_DIG)
+#if LDBL_MANT_DIG == 53
+#define MATH_LONGDOUBLE_DIGITS 17
 #endif
+#if LDBL_MANT_DIG == 64
+#define MATH_LONGDOUBLE_DIGITS 21
+#endif
+#if LDBL_MANT_DIG == 106
+#define MATH_LONGDOUBLE_DIGITS 33
+#endif
+#if LDBL_MANT_DIG == 113
+#define MATH_LONGDOUBLE_DIGITS 36
+#endif
+#elif defined(DBL_MANT_DIG)
+#if DBL_MANT_DIG == 53
+#define MATH_LONGDOUBLE_DIGITS 17
+#endif
+#else
+#define MATH_LONGDOUBLE_DIGITS 21
+#endif
+
+#ifndef MATH_LONGDOUBLE_DIGITS
+#define MATH_LONGDOUBLE_DIGITS 21
+#endif
+
+int _DIGITS = MATH_LONGDOUBLE_DIGITS;
 
 #if defined(__GNUC__)
 # if defined(__GNUC_PATCHLEVEL__)
