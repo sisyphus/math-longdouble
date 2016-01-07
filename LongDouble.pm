@@ -401,8 +401,12 @@ Math::LongDouble - perl interface to C's long double operations
 
    ld_set_prec($precision);
     Sets the precision of stringified values to $precision decimal
-    digits. Default precision is as specified by float.h's LDBL_DIG
-    (or 18 if LDBL_DIG is not defined).
+    digits. Default precision is set in the XS global _DIGITS to
+        1 + ceil(MANT_PREC * log(2) / log(10)
+    where MANT_PREC is LDBL_MANT_DIG if float.h defines that symbol.
+    Else MANT_PREC is DBL_MANT_DIG if float.h defines that symbol.
+    Else MANT_PREC is 21 (which is the correct value for a 64-bit
+    precision mantissa).
 
 
    $precision = ld_get_prec();
@@ -527,9 +531,11 @@ Math::LongDouble - perl interface to C's long double operations
     The returned string will contain the same as is displayed by
     "print $ld", except that print() will strip the trailing zeroes
     in the mantissa (significand) whereas LDtoSTR won't.
-    By default, provides 18 decimal digits of precision. This can be
-    altered by specifying the desired precision (in decimal digits)
-    in a call to ld_set_prec.
+    By default, provides 21 decimal digits of precision for the
+    typical 80-bit long double or 17 decimal digits if the long double
+    is a double. The number of digits dispalayed can be altered by
+    specifying the desired precision (in decimal digits) in a call to
+    ld_set_prec.
 
    $string = LDtoSTRP($ld, $precision);
     Same as LDtoSTR, but takes an additional arg that specifies the
@@ -881,7 +887,7 @@ Math::LongDouble - perl interface to C's long double operations
 
    This program is free software; you may redistribute it and/or modify
    it under the same terms as Perl itself.
-   Copyright 2012-14, Sisyphus
+   Copyright 2012-16, Sisyphus
 
 =head1 AUTHOR
 
