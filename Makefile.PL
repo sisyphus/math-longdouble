@@ -177,6 +177,7 @@ my %options = %{
   VERSION_FROM => 'LongDouble.pm',
   DEFINE   => $defines,
   clean   => { FILES => '*.exe myconfig.log' },
+  LICENSE => 'perl',
   META_MERGE => {
    'meta-spec' => { version => 2 },
     resources => {
