@@ -2,6 +2,7 @@
   - Improve the workaround for the __MINGW64__ modfl bug.
   - Align default output precision with mpfr library. (ie Rewrite
     calculation of _DIGITS in LongDouble.xs.)
+  - Extend the modf_LD mingw64 workaround to include mingw-runtime version 5.0.
 
  0.15
   - Another rewrite of try.in aimed at eliminating the continuing
