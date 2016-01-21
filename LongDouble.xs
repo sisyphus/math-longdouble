@@ -1748,7 +1748,8 @@ void log1p_LD(ldbl * rop, ldbl * op) {
 }
 
 void modf_LD(ldbl * integer, ldbl * frac, ldbl * op) {
-#if defined(__MINGW64__) && __MINGW64_VERSION_MAJOR == 4 && __MINGW64_VERSION_MINOR == 0 /* http://sourceforge.net/p/mingw-w64/bugs/478/ */
+#if defined(__MINGW64__) && (__MINGW64_VERSION_MAJOR == 4 || __MINGW64_VERSION_MAJOR == 5) \
+                         && __MINGW64_VERSION_MINOR == 0 /* http://sourceforge.net/p/mingw-w64/bugs/478/ */
   *integer = truncl(*op);
   *frac = *op - *integer;
 #else
