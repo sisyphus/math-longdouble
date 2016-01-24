@@ -30,6 +30,7 @@ t/special.t
 t/signbit.t
 t/stringification.t
 t/trig.t
+t/overload_cmp_reversal.t
 typemap
 
 
