@@ -3,10 +3,11 @@ Check whether signbitl can be linked.
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
-int main(void) {
- long double op = 0.6L;
+int main(int argc, char *argv[]) {
+ long double op = strtold(argv[1], NULL);
  int ret;
 
  ret = signbitl(op);
