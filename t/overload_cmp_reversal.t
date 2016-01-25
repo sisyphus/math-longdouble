@@ -386,26 +386,65 @@ $ok = '';
 
 #############
 
-if($nan != $nan) {print "ok 12\n"}
+# **
+
+my $check = $uv ** Math::LongDouble->new(0);
+
+if(Math::LongDouble::_itsa($check) == 96) {$ok .= 'a'}
 else {
-  warn "\$nan: $nan\n";
-  print "not ok 12\n";
+  warn "\n12a: Expected _itsa() to return 96, but got ", Math::LongDouble::_itsa($check), "\n";
 }
 
-if(Math::LongDouble::_nan_pow_bug()) {
-  warn "\n Skip test 23 - nan**0 is miscalculated by this compiler/libc\n";
-  print "ok 13\n";
-}
+if($check == 1) {$ok .= 'b'}
 else {
-  if($nan ** ZeroLD(1) == 1) {print "ok 13\n"}
-  else {
-    warn "\n13: ", $nan ** ZeroLD(1), "\n";
-    print "not ok 13\n";
-  }
+  warn "\n12b: Expected 1, got $check\n";
 }
 
-#############
+$check = $uv ** Math::LongDouble->new(1.0);
 
+if(Math::LongDouble::_itsa($check) == 96) {$ok .= 'c'}
+else {
+  warn "\n12c: Expected _itsa() to return 96, but got ", Math::LongDouble::_itsa($check), "\n";
+}
 
+if($check == ~0) {$ok .= 'd'}
+else {
+  warn "\n12d: Expected ", ~0, " got $check\n";
+}
+
+if(-2 ** Math::LongDouble->new(3.0) == -8) {$ok .= 'e'}
+else {
+  warn "\n12e: Expected -8, got ", -2 ** Math::LongDouble->new(3.0), "\n";
+}
+
+if(4 ** Math::LongDouble->new(2.5) == 32) {$ok .= 'f'}
+else {
+  warn "\n12f: Expected 32, got ", 4 ** Math::LongDouble->new(2.5), "\n";
+}
+
+if(2.5 ** Math::LongDouble->new(2) == 6.25) {$ok .= 'g'}
+else {
+  warn "\n12g: Expected 6.25, got ", 2.5 ** Math::LongDouble->new(2), "\n";
+}
+
+$check = '2.5' ** Math::LongDouble->new(2);
+
+if($check == 6.25) {$ok .= 'h'}
+else {
+  warn "\n12h: Expected 6.25, got $check\n";
+}
+
+if($ok eq 'abcdefgh') {print "ok 12\n"}
+else {
+  warn "\n\$ok: $ok\n";
+}
+
+$ok = '';
+
+if(Math::LongDouble::_itsa($uv) == 1) {print "ok 13\n"}
+else {
+  warn "\nExpected 1, got ", Math::LongDouble::_itsa($uv), "\n";
+  print "not ok 13\n";
+}
 
 
