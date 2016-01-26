@@ -437,6 +437,7 @@ else {
 if($ok eq 'abcdefgh') {print "ok 12\n"}
 else {
   warn "\n\$ok: $ok\n";
+  print "not ok 12\n";
 }
 
 $ok = '';
