@@ -1,4 +1,6 @@
  0.17
+  - Additional checks to Makefile.PL, trying to eliminate multiple FAIL reports
+    that emanate from Slaven's and Bingos' freebsd and dragonfly machines.
 
  0.16
   - Improve the workaround for the __MINGW64__ modfl bug.
