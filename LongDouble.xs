@@ -58,23 +58,8 @@ int _DIGITS = MATH_LONGDOUBLE_DIGITS;
 # else
 #  define __GNUC_VERSION__ (__GNUC__ * 10000 \
                             + __GNUC_MINOR__ * 100)
-# endif
-#if __GNUC_VERSION__ < 40600
-#define NO_SINCOSL 1 /* Is this too restrictive */
 #endif
 #endif
-
-/*
-None of my mingw.org compilers provide the sincosl function, so
-I include my own implementation of that function when those compilers
-are in use.
-*/
-#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) /* mingw.org compiler */
-#ifndef NO_SINCOSL
-#define NO_SINCOSL 2
-#endif
-#endif
-
 
 typedef long double ldbl;
 
@@ -1916,7 +1901,7 @@ int signbit_LD(ldbl * op) {
 }
 
 void sincos_LD(ldbl * sin, ldbl * cos, ldbl * op) {
-#ifdef NO_SINCOSL
+#ifdef SINCOSL_IS_UNAVAILABLE
   *sin = sinl(*op);
   *cos = cosl(*op);
 #else
@@ -1956,12 +1941,8 @@ void trunc_LD(ldbl * rop, ldbl * op) {
 }
 
 SV * _sincosl_status(pTHX) {
-#ifdef NO_SINCOSL
-#if NO_SINCOSL == 1
-  return newSVpv("using own implementation of sincosl function - old compiler (1)", 0);
-#else
-  return newSVpv("using own implementation of sincosl function - mingw.org compiler (2)", 0);
-#endif
+#ifdef SINCOSL_IS_UNAVAILABLE
+  return newSVpv("using own implementation of sincosl function", 0);
 #else
   return newSVpv("built with sincosl function", 0);
 #endif
