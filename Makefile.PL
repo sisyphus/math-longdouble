@@ -78,11 +78,6 @@ else {
   }
 }
 
-# Remove the test executable
-if(-e 'try.exe' && !unlink('./try.exe')) {
-  warn "Failed to unlink try.exe";
-}
-
 ###############################################
 # Try to detect whether nanl() is available and
 # implement a workaround if it's not.
@@ -98,13 +93,16 @@ unless(-e 'try3.exe') {
     $defines .= ' -DNANL_IS_UNAVAILABLE';
   }
 }
-
-# Remove the test executable
-if(-e 'try3.exe' && !unlink('./try3.exe')) {
-  warn "Failed to unlink try3.exe";
+else {
+  my $diag = $^O =~ /mswin32/i ? `try3.exe 0 2>&1` : `./try3.exe 0 2>&1`;
+  print WR "execution output (nanl check): $diag\n" if $open;
+  unless ($diag =~ /^rop /) {
+    $defines .= ' -DNANL_IS_UNAVAILABLE';
+  }
 }
 
 ###############################################
+
 # Try to detect a nan bug that has nan**0 is nan.
 # (Correct implementations have nan**0 == 1.)
 
@@ -120,12 +118,8 @@ print WR "nan**0 check diagnostic: $diag\n" if ($open && defined $diag);
 
 $defines .= ' -DNAN_POW_BUG' if $diag =~ /^NaN/i;
 
-# Remove the test executable
-if(-e 'try2.exe' && !unlink('./try2.exe')) {
-  warn "Failed to unlink try2.exe";
-}
-
 ###############################################
+
 # Try to detect whether signbitl() is available and
 # implement a workaround if it's not.
 
@@ -133,17 +127,42 @@ my $out = `$cc $opt -o try4.exe -x c try4.in -lm 2>&1`;
 
 print WR "build output (signbitl check): $out\n" if $open;
 
-# No linking problem at all if try3.exe exists.
+# No linking problem yet if try4.exe exists.
 unless(-e 'try4.exe') {
-
   if($out =~ /(`|'|"|\s)_?signbitl('|`|"|\s)/) {
     $defines .= ' -DSIGNBITL_IS_UNAVAILABLE';
   }
 }
+else {
+  my $diag = $^O =~ /mswin32/i ? `try4.exe 0 2>&1` : `./try4.exe 0 2>&1`;
+  print WR "execution output (signbitl check): $diag\n" if $open;
+  unless ($diag =~ /^ret /) {
+    $defines .= ' -DSIGNBITL_IS_UNAVAILABLE';
+  }
+}
 
-# Remove the test executable
-if(-e 'try4.exe' && !unlink('./try4.exe')) {
-  warn "Failed to unlink try4.exe";
+###############################################
+
+# Try to detect the absence of sincosl and implement
+# workaround (-DSINCOSL_IS_UNAVAILABLE) when absence is detected.
+
+my $out = `$cc $opt -o try5.exe -x c try5.in -lm 2>&1`;
+
+print WR "build output (sincosl check): $out\n" if $open;
+
+# No linking problem yet if try5.exe exists.
+unless(-e 'try5.exe') {
+
+  if($out =~ /(`|'|"|\s)_?sincosl('|`|"|\s)/) {
+    $defines .= ' -DSINCOSL_IS_UNAVAILABLE';
+  }
+}
+else {
+  my $diag = $^O =~ /mswin32/i ? `try5.exe 0 2>&1` : `./try5.exe 0 2>&1`;
+  print WR "execution output (sincosl check): $diag\n" if $open;
+  unless ($diag =~ /^output: /) {
+    $defines .= ' -DSINCOSL_IS_UNAVAILABLE';
+  }
 }
 
 ###############################################
@@ -151,7 +170,7 @@ if(-e 'try4.exe' && !unlink('./try4.exe')) {
 if($open) {close WR or warn "Unable to close $log after writing: $!"}
 
 # Uncomment following line to test the various workarounds - should make no difference to test results.
-#$defines .= ' -DNANL_IS_UNAVAILABLE -DISNANL_IS_UNAVAILABLE -DSIGNBITL_IS_UNAVAILABLE -DNAN_POW_BUG';
+#$defines .= ' -DNANL_IS_UNAVAILABLE -DISNANL_IS_UNAVAILABLE -DSIGNBITL_IS_UNAVAILABLE -DNAN_POW_BUG -DSINCOSL_IS_UNAVAILABLE';
 
 $defines .= $] < 5.008 ? " -DOLDPERL" : " -DNEWPERL";
 
