@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
  ret = signbitl(op);
 
  if(!ret) printf("ret set as expected\n");
+ else printf("signbitl is broken\n");
 
  return 0;
 }
