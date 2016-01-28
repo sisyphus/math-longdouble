@@ -5,12 +5,13 @@ Check whether nanl can be linked.
 #include <stdio.h>
 #include <math.h>
 
-int main(void) {
+int main(int argc, char *argv[]) {
  long double rop;
 
- rop = nanl("0");
+ rop = nanl(argv[1]);
 
  if(rop != rop) printf("rop set as expected\n");
+ else printf("rop not as expected\n");
 
  return 0;
 }
