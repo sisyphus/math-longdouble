@@ -1,4 +1,5 @@
  0.18
+  - tweak output of try2.in.
 
  0.17
   - Additional checks to Makefile.PL, trying to eliminate multiple FAIL reports
