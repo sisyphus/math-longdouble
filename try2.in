@@ -14,6 +14,7 @@ Check whether NaN ** 0 == 1.
 
 int main(int argc, char *argv[]) {
  long double rop, op, check;
+ unsigned long ul;
 
  rop = strtold(argv[1], NULL);
  op =  strtold(argv[2], NULL);
@@ -27,6 +28,9 @@ int main(int argc, char *argv[]) {
    if(check != check) printf("NaN\n");
    else printf("%Le\n", check);
  }
+
+ ul = (unsigned long)sizeof(long double);
+ printf("size of long double: %u\n", ul);
 
  return 0;
 
