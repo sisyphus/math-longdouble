@@ -409,8 +409,9 @@ else {
 }
 
 if($check == ~0) {$ok .= 'd'}
-elsif($Config{osname} =~ /freebsd/ && $check == '1.8446744073709551616e+19') {
-  warn "\n12d: ignoring compiler bug that sets ~0 ** 1.0 to ~0 + 1\n";
+elsif($Config{osname} =~ /freebsd|dragonfly/  && $check == '1.8446744073709551616e+19') {
+  # There's apparently a compiler/libc bug in some of the freebsd and dragonfly smokers.
+  warn "\n12d: ignoring compiler bug that sets (~0 ** 1.0) to (~0 + 1)\n";
   $ok .= 'd';
 }
 else {
