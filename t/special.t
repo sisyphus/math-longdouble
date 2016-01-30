@@ -11,7 +11,14 @@ my ($check, $check1) = (NaNLD(), NaNLD());
 erf_LD($check, NVtoLD(0.07));
 erfc_LD($check1, NVtoLD(0.07));
 
+#print "\n$check\n$check1\n\n";
+
 if($check1 == UnityLD(1) - $check) {print "ok 2\n"}
+elsif(approx2($check1, UnityLD(1) - $check)) {
+  warn "\nAccepting that $check1 and ", UnityLD(1) - $check, " are not exact complements\n",
+        "Most likely erfl and/or erfcl do not provide advertised precision\n";
+  print "ok 2\n";
+}
 else {
   warn "Expected complementary values\nbut erf returned $check\nand erfc returned $check1\n";
   print "not ok 2\n";
@@ -44,6 +51,12 @@ else {
 sub approx {
     my $eps = abs($_[0] - Math::LongDouble->new($_[1]));
     return 0 if $eps > Math::LongDouble->new(0.000000001);
+    return 1;
+}
+
+sub approx2 {
+    my $eps = abs($_[0] - Math::LongDouble->new($_[1]));
+    return 0 if $eps > Math::LongDouble->new('1e-16');
     return 1;
 }
 
