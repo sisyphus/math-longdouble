@@ -14,15 +14,32 @@ Check whether NaN ** 0 == 1.
 
 int main(int argc, char *argv[]) {
  long double rop, op, check;
+ long l;
  unsigned long ul;
 
  rop = strtold(argv[1], NULL);
- op =  strtold(argv[2], NULL);
+ op  = strtold(argv[2], NULL);
+ l   = strtol (argv[2], NULL, 10);
+ ul  = strtoul(argv[2], NULL, 10);
 
 
  if(rop == rop) printf("rop should be 'not a number' but rop == rop\n");
 
  check = powl(rop, op);
+ if(check == 1.0L) printf("1.0L\n");
+ else {
+   if(check != check) printf("NaN\n");
+   else printf("%Le\n", check);
+ }
+
+ check = powl(rop, (long double)l);
+ if(check == 1.0L) printf("1.0L\n");
+ else {
+   if(check != check) printf("NaN\n");
+   else printf("%Le\n", check);
+ }
+
+ check = powl(rop, (long double)ul);
  if(check == 1.0L) printf("1.0L\n");
  else {
    if(check != check) printf("NaN\n");
