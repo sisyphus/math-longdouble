@@ -1,5 +1,9 @@
  0.18
   - tweak output of try2.in.
+  - alter test 12 in t/overload_cmp_reversal.t to cater for dragonfly (in addition
+    to freebsd).
+  - alter test 2 in t/special.t to cater for dragonfly's reduced erfl and erfcl
+    precision.
 
  0.17
   - Additional checks to Makefile.PL, trying to eliminate multiple FAIL reports
