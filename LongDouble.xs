@@ -98,40 +98,23 @@ int  _is_inf(long double x) {
      return 0; /* Finite Real */
 }
 
-/* Replaced */
-/*
-//int _is_zero(long double x) {
-//    char * buffer;
-//
-//    if(x != 0.0L) return 0;
-//
-//    Newx(buffer, 2, char);
-//
-//    sprintf(buffer, "%.0Lf", x);
-//
-//    if(!strcmp(buffer, "-0")) {
-//      Safefree(buffer);
-//      return -1;
-//    }
-//
-//    Safefree(buffer);
-//    return 1;
-//}
-*/
-
+/* Resurrected - not terribly efficient but at least it seems to generally work */
 int _is_zero(long double x) {
+    char * buffer;
 
-  int n = sizeof(long double);
-  void * p = &x;
+    if(x != 0.0L) return 0;
 
-  if(x != 0.0L) return 0;
+    Newx(buffer, 2, char);
 
-#ifdef WE_HAVE_BENDIAN /* Big Endian architecture */
-  if(((unsigned char*)p)[0] >= 128) return -1;
-#else
-  if(((unsigned char*)p)[n - 1] >= 128) return -1;
-#endif
-  return 1;
+    sprintf(buffer, "%.0Lf", x);
+
+    if(!strcmp(buffer, "-0")) {
+      Safefree(buffer);
+      return -1;
+    }
+
+    Safefree(buffer);
+    return 1;
 }
 
 long double _get_inf(int sign) {
@@ -1196,7 +1179,14 @@ SV * _overload_abs(pTHX_ SV * a, SV * b, SV * third) {
      SvREADONLY_on(obj);
 
      *ld = *(INT2PTR(long double *, SvIV(SvRV(a))));
+     /*
+     There exists at least one compiler/libc where -0.0 * -1.0 is still -0.0
+     So we can't do:
      if(_is_zero(*ld) < 0 || *ld < 0 ) *ld *= -1.0L;
+     Instead we do:
+     */
+     if(*ld <= 0) *ld = *ld == 0 ? 0.0L
+                                 : *ld * -1.0L;
      return obj_ref;
 }
 
