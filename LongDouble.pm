@@ -146,7 +146,7 @@ sub new {
     # If there are no args, then we just want to return a
     # Math::LongDouble object that's a NaN.
 
-    if(!@_) {return NaNLD(1)}
+    if(!@_) {return NaNLD()}
 
     if(@_ > 2) {die "More than 2 arguments supplied to new()"}
 
