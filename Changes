@@ -2,6 +2,7 @@
   - Revert to previous version of _is_zero() XSub. (More reliable.)
   - Alter Overload_abs() to work correctly with -0 when the compiler/libc
     insists that -0 * -1.0 is still -0.
+  - In new(), correct occurrence of "NaNLD(1)" to "NaNLD()" - and add test to new.t.
 
  0.18
   - tweak output of try2.in.
