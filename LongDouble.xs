@@ -357,6 +357,15 @@ SV * IVtoLD(pTHX_ SV * x) {
 }
 
 SV * LDtoNV(pTHX_ SV * ld) {
+/*
+ Because of a bug in gcc we avoid casting a long double "inf" to a __float128.
+ (Instead cast a double "inf" to __float128.)
+ See https://sourceforge.net/p/mingw-w64/bugs/479/
+*/
+#ifdef NO_INF_CAST_TO_NV
+     if(_is_inf(*(INT2PTR(long double *, SvIVX(SvRV(ld))))))
+       return newSVnv((NV)strtod("inf", NULL));
+#endif
      return newSVnv((NV)(*(INT2PTR(long double *, SvIVX(SvRV(ld))))));
 }
 
