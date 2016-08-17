@@ -363,8 +363,14 @@ SV * LDtoNV(pTHX_ SV * ld) {
  See https://sourceforge.net/p/mingw-w64/bugs/479/
 */
 #ifdef NO_INF_CAST_TO_NV
-     if(_is_inf(*(INT2PTR(long double *, SvIVX(SvRV(ld))))))
+     int t;
+     long double temp = *(INT2PTR(long double *, SvIVX(SvRV(ld)))));
+     t = _is_inf(temp);
+     if(t) {
+       if(t < 0) return newSVnv((NV)strtod("-inf", NULL));
        return newSVnv((NV)strtod("inf", NULL));
+     }
+
 #endif
      return newSVnv((NV)(*(INT2PTR(long double *, SvIVX(SvRV(ld))))));
 }
