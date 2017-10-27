@@ -365,7 +365,7 @@ SV * LDtoNV(pTHX_ SV * ld) {
 */
 #if defined(NO_INF_CAST_TO_NV) && defined(__GNUC__) && ((__GNUC__ > 4 && __GNUC__ < 7) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9))
      int t;
-     long double temp = *(INT2PTR(long double *, SvIVX(SvRV(ld)))));
+     long double temp = *(INT2PTR(long double *, SvIVX(SvRV(ld))));
      t = _is_inf(temp);
      if(t) {
        if(t < 0) return newSVnv((NV)strtod("-inf", NULL));
