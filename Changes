@@ -1,4 +1,5 @@
  0.21
+  - Fix error in t/trig.t (in test 12 diagnostic message).
 
  0.19
   - Revert to previous version of _is_zero() XSub. (More reliable.)
