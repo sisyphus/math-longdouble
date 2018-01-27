@@ -1,6 +1,7 @@
 MANIFEST
 Makefile.PL
 LongDouble.pm
+LongDouble.pod
 LongDouble.xs
 README
 Changes
