@@ -103,7 +103,7 @@ DynaLoader::bootstrap Math::LongDouble $Math::LongDouble::VERSION;
     M_El M_LOG2El M_LOG10El M_LN2l M_LN10l M_PIl M_PI_2l M_PI_4l
     M_1_PIl M_2_PIl  M_2_SQRTPIl M_SQRT2l M_SQRT1_2l
 
-    ld_max_orig_len ld_min_inter_prec ld_min_inter_base ld_max_orig_base ld_bytes
+    ld_max_orig_len ld_min_inter_prec ld_bytes
 
     llrint_LD llround_LD lrint_LD lround_LD frexp_LD nan_LD remquo_LD
     acos_LD acosh_LD asin_LD asinh_LD atan_LD atanh_LD atan2_LD cbrt_LD ceil_LD
