@@ -548,10 +548,8 @@ Math::LongDouble - perl interface to C's long double operations
     Otherwise returns 0.
 
    $hex = ld_bytes($ld);
-    Returns the  hex representation of the value held by $ld as a
-    string of X hex characters, where X == the size of the long
-    double (in bytes) multiplied by 2.
-
+    Returns the  hex representation (in big-endian order) of the
+    byte structure of $ld.
 
 =head1 BASE CONVERSIONS
 
