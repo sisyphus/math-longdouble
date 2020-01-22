@@ -1,4 +1,5 @@
  0.22
+  - Fix t/overload.t to better handle BSD's mentally-retarded, fuck-brained bullshit.
 
  0.21
   - Fix error in t/trig.t (in test 12 diagnostic message).
