@@ -119,7 +119,7 @@ DynaLoader::bootstrap Math::LongDouble $Math::LongDouble::VERSION;
     sincos_LD sinh_LD sin_LD sqrt_LD tan_LD tanh_LD tgamma_LD trunc_LD
     )]);
 
-my $fmt = "a" . Math::LongDouble::_get_math_longdouble_nvsize();
+my $fmt = "a" . Math::LongDouble::_get_actual_ldblsize();
 
 sub dl_load_flags {0} # Prevent DynaLoader from complaining and croaking
 
