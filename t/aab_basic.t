@@ -37,3 +37,6 @@ else {
   warn "SINCOSL_IS_UNAVAILABLE is defined\n";
 }
 
+warn "Actual nvsize == ", Math::LongDouble::_get_actual_nvsize(), "\n";
+warn "Actual long double size = ", Math::LongDouble::_get_actual_ldblsize(), "\n"
+
