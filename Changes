@@ -1,3 +1,5 @@
+ 0.23
+
  0.22
   - Fix t/overload.t to better handle BSD's mentally-retarded, fuck-brained bullshit.
   - Fix cmp_NV() to correctly handle the case where the precision of the NV is greater
