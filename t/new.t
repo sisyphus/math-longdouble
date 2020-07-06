@@ -88,15 +88,15 @@ else {
   print "not ok 10\n";
 }
 
-$uv = new Math::LongDouble(~0);
+$uv = Math::LongDouble->new(~0);
 if($uv == UVtoLD(~0)) {print "ok 11\n"}
 else {
   warn "New: $uv\nUVtoLD: ", UVtoLD(~0), "\n";
   print "not ok 11\n";
 }
 
-$iv = new Math::LongDouble(-23);
-$pv = new Math::LongDouble('-23');
+$iv = Math::LongDouble->new(-23);
+$pv = Math::LongDouble->new('-23');
 
 if($pv == $iv){print "ok 12\n"}
 else {
@@ -104,8 +104,8 @@ else {
   print "not ok 12\n";
 }
 
-$pv += new Math::LongDouble(0.5);
-$nv =  new Math::LongDouble(-22.5);
+$pv += Math::LongDouble->new(0.5);
+$nv =  Math::LongDouble->new(-22.5);
 
 if($pv == $nv) {print "ok 13\n"}
 else {
@@ -121,7 +121,7 @@ else {
   print "not ok 14\n";
 }
 
-$pv_copy2 = new Math::LongDouble($pv);
+$pv_copy2 = Math::LongDouble->new($pv);
 
 if($pv == $pv_copy2) {print "ok 15\n"}
 else {
