@@ -112,7 +112,7 @@ sleep 1;
 
 print WR "build output (nan**0 check):\n$out\n" if $open;
 
-$diag = $^O =~ /mswin32/i ? `try2.exe nan 0 2>&1` : `./try2.exe nan 0 2>&1`;
+my $diag = $^O =~ /mswin32/i ? `try2.exe nan 0 2>&1` : `./try2.exe nan 0 2>&1`;
 
 print WR "nan**0 check diagnostic: $diag\n" if ($open && defined $diag);
 
