@@ -62,7 +62,7 @@ use subs qw(
 our $VERSION = '0.23';
 #$VERSION = eval $VERSION;
 
-DynaLoader::bootstrap Math::LongDouble $Math::LongDouble::VERSION;
+Math::LongDouble->DynaLoader::bootstrap($Math::LongDouble::VERSION);
 
 @Math::LongDouble::EXPORT = ();
 @Math::LongDouble::EXPORT_OK = qw(
