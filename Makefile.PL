@@ -4,11 +4,9 @@ use warnings;
 use ExtUtils::MakeMaker;
 use Config;
 
-
-eval {require ActivePerl::DocTools;};
-unless($@) {
-  warn "\n  WARNING: The sqrt and ** (pow) overloading is buggy\n",
-       "           on ActivePerl. (See the README file.)\n\n";
+if($Config{cc} eq 'cl') {
+  warn "\n  WARNING: The sqrt and ** (pow) overloading can be buggy\n",
+       "             on MSVC-built perls. (See the README file.)\n\n";
 }
 
 my $defines = '';
