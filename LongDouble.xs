@@ -1417,22 +1417,14 @@ SV * _overload_atan2(pTHX_ SV * a, SV * b, SV * third) {
      croak("Invalid argument supplied to Math::LongDouble::_overload_atan2 function");
 }
 
-SV * _overload_inc(pTHX_ SV * a, SV * b, SV * third) {
-
-     SvREFCNT_inc(a);
+void _overload_inc(pTHX_ SV * a, SV * b, SV * third) {
 
      *(INT2PTR(long double *, SvIVX(SvRV(a)))) += 1.0L;
-
-     return a;
 }
 
-SV * _overload_dec(pTHX_ SV * a, SV * b, SV * third) {
-
-     SvREFCNT_inc(a);
+void _overload_dec(pTHX_ SV * a, SV * b, SV * third) {
 
      *(INT2PTR(long double *, SvIVX(SvRV(a)))) -= 1.0L;
-
-     return a;
 }
 
 SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
@@ -3029,23 +3021,41 @@ CODE:
   RETVAL = _overload_atan2 (aTHX_ a, b, third);
 OUTPUT:  RETVAL
 
-SV *
+void
 _overload_inc (a, b, third)
 	SV *	a
 	SV *	b
 	SV *	third
-CODE:
-  RETVAL = _overload_inc (aTHX_ a, b, third);
-OUTPUT:  RETVAL
+        PREINIT:
+        I32* temp;
+        PPCODE:
+        temp = PL_markstack_ptr++;
+        _overload_inc(aTHX_ a, b, third);
+        if (PL_markstack_ptr != temp) {
+          /* truly void, because dXSARGS not invoked */
+          PL_markstack_ptr = temp;
+          XSRETURN_EMPTY; /* return empty stack */
+        }
+        /* must have used dXSARGS; list context implied */
+        return; /* assume stack size is correct */
 
-SV *
+void
 _overload_dec (a, b, third)
 	SV *	a
 	SV *	b
 	SV *	third
-CODE:
-  RETVAL = _overload_dec (aTHX_ a, b, third);
-OUTPUT:  RETVAL
+        PREINIT:
+        I32* temp;
+        PPCODE:
+        temp = PL_markstack_ptr++;
+        _overload_dec(aTHX_ a, b, third);
+        if (PL_markstack_ptr != temp) {
+          /* truly void, because dXSARGS not invoked */
+          PL_markstack_ptr = temp;
+          XSRETURN_EMPTY; /* return empty stack */
+        }
+        /* must have used dXSARGS; list context implied */
+        return; /* assume stack size is correct */
 
 SV *
 _overload_pow (a, b, third)
