@@ -1,4 +1,5 @@
  0.25
+  - Silence pointless warnings.
 
  0.24
   - Simplify overloading of '++' and '--'.
