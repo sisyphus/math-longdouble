@@ -1,3 +1,5 @@
+ 0.26
+
  0.25
   - Silence pointless warnings.
   - Fix https://rt.cpan.org/Ticket/Display.html?id=151230. Thanks, Peter Acklam.
