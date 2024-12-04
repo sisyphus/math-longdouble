@@ -162,7 +162,9 @@ else {
 # Try to detect the absence of sincosl and implement
 # workaround (-DSINCOSL_IS_UNAVAILABLE) when absence is detected.
 
-$out = `$cc $opt -o try5.exe -x c try5.in -lm 2>&1`;
+# Build with "-Wno-implicit-function-declaration" to work around the problem of
+# such warnings being fatal with gcc-14 and later.
+$out = `$cc $opt -Wno-implicit-function-declaration -o try5.exe -x c try5.in -lm 2>&1`;
 
 print WR "build output (sincosl check): $out\n" if $open;
 
