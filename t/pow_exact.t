@@ -4,8 +4,15 @@ use Math::LongDouble qw(:all);
 
 use Test::More;
 
-if(Math::LongDouble->new('1e-298') == Math::LongDouble->new(10) ** -298 ||
-   Math::LongDouble::_use_powq() == 1) {
+if((Math::LongDouble->new('1e-298') == Math::LongDouble->new(10) ** -298
+           &&
+    Math::LongDouble->new('1e-100') == Math::LongDouble->new(10) ** -100
+           &&
+    Math::LongDouble->new('1e-2') == Math::LongDouble->new(10) ** -2
+           &&
+    Math::LongDouble->new('1e+185') == Math::LongDouble->new(10) ** 185)
+           ||
+    Math::LongDouble::_use_powq() == 1) {
 
    for my $p(1..4955) {
       cmp_ok(Math::LongDouble->new("1e$p"), '==', Math::LongDouble->new(10) ** $p, "10 ** $p ok");

@@ -193,7 +193,7 @@ else {
 ###################### NEW ######################
 if(!$no_use_powq) {
   # If powl() is buggy we want to use powq(), if available.
-  my $out = `$cc -o quad.exe -x c quad.in -D__USE_MINGW_ANSI_STDIO -lquadmath 2>&1`; # No optimization.
+  my $out = `$cc -o quad.exe -x c quad.in -D__USE_MINGW_ANSI_STDIO -lm -lquadmath 2>&1`; # No optimization.
   if($open) {
     if(-e 'quad.exe') {
       $out = $^O =~ /MSWin32/i ? `quad.exe 2>&1`
