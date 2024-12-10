@@ -1,4 +1,5 @@
 0.27
+  - Work around buggy powl (if present) by using powq (if available).
 
 0.26
   - Set allowable error for test 17 of t/log_exp.t to a reasonable value (2 ** -57).

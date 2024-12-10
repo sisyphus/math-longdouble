@@ -458,7 +458,21 @@ Math::LongDouble - perl interface to C's long double operations
     nextafterl($op1, $op2) is assigned to $rop.
 
    pow_LD($rop, $op1, $op2);
-    pow($op1, $op2) is assigned to $rop.
+    pow($op1, $op2) is assigned to $rop. (Uses C powl() function.)
+
+   powq_LD($rop, $op1, $op2);
+    As for pow_LD(), except that $op1 and $op2 are cast to __float128
+    values, and the calculation is done using the quadmath library's
+    powq() function - the result of which is cast back to a long
+    double and returned to $rop.
+    The aim here is to provide a precise alternative when powl() is
+    buggy. This function will be made available automatically only if
+    it is detected that powl() is buggy && that powq() is available.
+    The function can be made explicitly unavailable by providing the
+    'USE_POWL' argument to the 'perl Makefile.PL' command.
+    If powq_LD() is provided then powq() will also be used in the
+    sameway in the '**' and '**=' overloading. (Otherwise powl() will
+    be used in that overloading.)
 
    remainder_LD($rop, $op1, $op2);
     remainderl($op1, $op2) is assigned to $rop.

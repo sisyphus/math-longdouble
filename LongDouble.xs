@@ -15,6 +15,10 @@
 #include "math_longdouble_include.h"
 #include "math_longdouble_unused.h"
 
+#if defined USE_POWQ
+#include <quadmath.h>
+#endif
+
 #if defined(LDBL_MANT_DIG)
 #  if LDBL_MANT_DIG == 53
 #    define MATH_LONGDOUBLE_DIGITS 17
@@ -1499,10 +1503,13 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
 
+#ifndef USE_POWQ
+
      if(SvUOK(b)) {
        if(SWITCH_ARGS)
             *ld = powl((ldbl)SvUVX(b), *(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
        else *ld = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), (ldbl)SvUVX(b));
+
        return obj_ref;
      }
 
@@ -1510,18 +1517,18 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
        if(SWITCH_ARGS)
             *ld = powl((ldbl)SvIVX(b), *(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
        else {
-#ifdef NAN_POW_BUG
+#  ifdef NAN_POW_BUG
          if(_is_nan(*(INT2PTR(ldbl *, SvIVX(SvRV(a))))) && SvIVX(b) == 0) *ld = 1.0L;
          else *ld = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), (ldbl)SvIVX(b));
-#else
+#  else
          *ld = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), (ldbl)SvIVX(b));
-#endif
+#  endif
        }
        return obj_ref;
      }
 
      if(SvNOK(b)) {
-#ifdef NAN_POW_BUG
+#  ifdef NAN_POW_BUG
        if(SWITCH_ARGS) {
          if(_is_nan(SvNVX(b)) && *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) == 0) *ld = 1.0L;
          else *ld = powl((ldbl)SvNVX(b), *(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
@@ -1530,17 +1537,17 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
          if(_is_nan(*(INT2PTR(ldbl *, SvIVX(SvRV(a))))) && SvNVX(b) == 0) *ld = 1.0L;
          else *ld = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), (ldbl)SvNVX(b));
        }
-#else
+#  else
        if(SWITCH_ARGS)
             *ld = powl((ldbl)SvNVX(b), *(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
        else *ld = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), (ldbl)SvNVX(b));
-#endif
+#  endif
        return obj_ref;
      }
 
      if(SvPOK(b)) {
        char * p;
-#ifdef NAN_POW_BUG
+#  ifdef NAN_POW_BUG
        if(SWITCH_ARGS) {
          if(_is_nan(strtold(SvPV_nolen(b), &p)) && *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) == 0.0L) *ld = 1.0L;
          else *ld = powl(strtold(SvPV_nolen(b), &p), *(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
@@ -1549,11 +1556,11 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
          if(_is_nan(*(INT2PTR(ldbl *, SvIVX(SvRV(a))))) && strtold(SvPV_nolen(b), &p) == 0.0L) *ld = 1.0L;
          else *ld = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), strtold(SvPV_nolen(b), &p));
        }
-#else
+#  else
        if(SWITCH_ARGS)
             *ld = powl(strtold(SvPV_nolen(b), &p), *(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
        else *ld = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), strtold(SvPV_nolen(b), &p));
-#endif
+#  endif
        _nnum_inc(p);
        return obj_ref;
      }
@@ -1561,24 +1568,113 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
     if(sv_isobject(b)) {
        const char *h = HvNAME(SvSTASH(SvRV(b)));
        if(strEQ(h, "Math::LongDouble")) {
-#ifdef NAN_POW_BUG
+#  ifdef NAN_POW_BUG
         if(_is_nan(*(INT2PTR(long double *, SvIVX(SvRV(a)))))
                 && *(INT2PTR(long double *, SvIVX(SvRV(b)))) == 0.0L ) *ld = 1.0L;
         else *ld = powl(*(INT2PTR(long double *, SvIVX(SvRV(a)))), *(INT2PTR(long double *, SvIVX(SvRV(b)))));
-#else
+#  else
         *ld = powl(*(INT2PTR(long double *, SvIVX(SvRV(a)))), *(INT2PTR(long double *, SvIVX(SvRV(b)))));
-#endif
+#  endif
         return obj_ref;
       }
       croak("Invalid object supplied to Math::LongDouble::_overload_pow function");
     }
     croak("Invalid argument supplied to Math::LongDouble::_overload_pow function");
+
+#else /* USE_POWQ defined */
+
+     if(SvUOK(b)) {
+       if(SWITCH_ARGS)
+            *ld = (ldbl)powq((__float128)SvUVX(b), (__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
+       else *ld = (ldbl)powq((__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), (__float128)SvUVX(b));
+
+       return obj_ref;
+     }
+
+     if(SvIOK(b)) {
+       if(SWITCH_ARGS)
+            *ld = (ldbl)powq((__float128)SvIVX(b), (__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
+       else {
+         *ld = (ldbl)powq((__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), (__float128)SvIVX(b));
+       }
+       return obj_ref;
+     }
+
+     if(SvNOK(b)) {
+       if(SWITCH_ARGS)
+            *ld = (ldbl)powq((__float128)SvNVX(b), (__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
+       else *ld = (ldbl)powq((__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), (__float128)SvNVX(b));
+       return obj_ref;
+     }
+
+     if(SvPOK(b)) {
+       char * p;
+       if(SWITCH_ARGS)
+            *ld = (ldbl)powq((__float128)strtold(SvPV_nolen(b), &p), (__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))));
+       else *ld = (ldbl)powq((__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))), (__float128)strtold(SvPV_nolen(b), &p));
+       _nnum_inc(p);
+       return obj_ref;
+     }
+
+    if(sv_isobject(b)) {
+       const char *h = HvNAME(SvSTASH(SvRV(b)));
+       if(strEQ(h, "Math::LongDouble")) {
+        *ld = (ldbl)powq((__float128)*(INT2PTR(long double *, SvIVX(SvRV(a)))), (__float128)*(INT2PTR(long double *, SvIVX(SvRV(b)))));
+        return obj_ref;
+      }
+      croak("Invalid object supplied to Math::LongDouble::_overload_pow function");
+    }
+    croak("Invalid argument supplied to Math::LongDouble::_overload_pow function");
+#endif /* end of USE_POWQ */
 }
 
 SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
     PERL_UNUSED_ARG(third);
 
     SvREFCNT_inc(a);
+
+#ifdef USE_POWQ
+
+    if(SvUOK(b)) {
+       *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = (ldbl)powq((__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
+                                                    (__float128)SvUVX(b));
+        return a;
+    }
+
+    if(SvIOK(b)) {
+       *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = (ldbl)powq((__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
+                                                    (__float128)SvIVX(b));
+        return a;
+    }
+
+    if(SvNOK(b)) {
+       *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = (ldbl)powq((__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
+                                                    (__float128)SvNVX(b));
+        return a;
+    }
+
+    if(SvPOK(b)) {
+       char * p;
+       *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = (ldbl)powq((__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
+                                                    (__float128)strtold(SvPV_nolen(b), &p));
+       _nnum_inc(p);
+       return a;
+    }
+
+    if(sv_isobject(b)) {
+       const char *h = HvNAME(SvSTASH(SvRV(b)));
+       if(strEQ(h, "Math::LongDouble")) {
+        *(INT2PTR(long double *, SvIVX(SvRV(a)))) = (ldbl)powq((__float128)*(INT2PTR(long double *, SvIVX(SvRV(a)))),
+                                                        (__float128)*(INT2PTR(long double *, SvIVX(SvRV(b)))));
+        return a;
+      }
+      SvREFCNT_dec(a);
+      croak("Invalid object supplied to Math::LongDouble::_overload_pow_eq function");
+    }
+    SvREFCNT_dec(a);
+    croak("Invalid argument supplied to Math::LongDouble::_overload_pow_eq function");
+
+#else /* USE_POWQ is NOT defined */
 
     if(SvUOK(b)) {
        *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
@@ -1588,44 +1684,44 @@ SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
     }
 
     if(SvIOK(b)) {
-#ifdef NAN_POW_BUG
+#  ifdef NAN_POW_BUG
        *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = _is_nan(*(INT2PTR(ldbl *, SvIVX(SvRV(a))))) && SvIVX(b) == 0
                                          ? 1.0L
                                          : powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
                                                     (ldbl)SvIVX(b));
-#else
+#  else
        *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
                                                     (ldbl)SvIVX(b));
-#endif
+#  endif
         return a;
     }
 
     if(SvNOK(b)) {
-#ifdef NAN_POW_BUG
+#  ifdef NAN_POW_BUG
        *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = (_is_nan(*(INT2PTR(ldbl *, SvIVX(SvRV(a))))) && SvNVX(b) == 0) ||
                                            (_is_nan(SvNVX(b)) && *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) == 0.0L)
                                          ? 1.0L
                                          : powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
                                                     (ldbl)SvNVX(b));
-#else
+#  else
        *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
                                                     (ldbl)SvNVX(b));
-#endif
+#  endif
         return a;
     }
 
     if(SvPOK(b)) {
        char * p;
-#ifdef NAN_POW_BUG
+#  ifdef NAN_POW_BUG
        *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = _is_nan(*(INT2PTR(ldbl *, SvIVX(SvRV(a))))) &&
                                            strtold(SvPV_nolen(b), &p) == 0.0L
                                          ? 1.0L
                                          : powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
                                                     strtold(SvPV_nolen(b), &p));
-#else
+#  else
        *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
                                                     strtold(SvPV_nolen(b), &p));
-#endif
+#  endif
        _nnum_inc(p);
        return a;
     }
@@ -1633,16 +1729,16 @@ SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
     if(sv_isobject(b)) {
        const char *h = HvNAME(SvSTASH(SvRV(b)));
        if(strEQ(h, "Math::LongDouble")) {
-#ifdef NAN_POW_BUG
+#  ifdef NAN_POW_BUG
        *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = _is_nan(*(INT2PTR(ldbl *, SvIVX(SvRV(a))))) &&
                                                    *(INT2PTR(ldbl *, SvIVX(SvRV(b)))) == 0.0L
                                          ? 1.0L
                                          : powl(*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
                                                     (ldbl)SvNV(b));
-#else
+#  else
         *(INT2PTR(long double *, SvIVX(SvRV(a)))) = powl(*(INT2PTR(long double *, SvIVX(SvRV(a)))),
                                                         *(INT2PTR(long double *, SvIVX(SvRV(b)))));
-#endif
+#  endif
         return a;
       }
       SvREFCNT_dec(a);
@@ -1650,6 +1746,7 @@ SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
     }
     SvREFCNT_dec(a);
     croak("Invalid argument supplied to Math::LongDouble::_overload_pow_eq function");
+#endif /* end of USE_POWQ */
 }
 
 SV * _wrap_count(pTHX) {
@@ -1932,6 +2029,18 @@ void pow_LD(pTHX_ ldbl * rop, ldbl * op1, ldbl * op2) {
   else *rop = powl(*op1, *op2);
 #else
   *rop = powl(*op1, *op2);
+#endif
+}
+
+void powq_LD(ldbl * rop, ldbl * op1, ldbl * op2) {
+#if defined(USE_POWQ)
+  /* Do powq((__float128)*op1, (__float128)*op2), then cast *
+   * the result to a long double, and return it to rop      */
+
+  *rop = (ldbl)powq((__float128)*op1, (__float128)*op2);
+#else
+  PERL_UNUSED_ARG3(rop, op1, op2);
+  croak("powq_LD not available because \"USE_POWQ\" was not defined by Makefile.PL");
 #endif
 }
 
@@ -2632,6 +2741,14 @@ int _get_actual_ldblsize(void) {
   return MATH_LONGDOUBLE_SIZE;
 }
 
+int _use_powq(void) {
+#if defined(USE_POWQ)
+  return 1;
+#else
+  return 0;
+#endif
+}
+
 
 MODULE = Math::LongDouble  PACKAGE = Math::LongDouble
 
@@ -2653,7 +2770,7 @@ _print_bytes (p, n)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 ld_set_prec (x)
@@ -2669,7 +2786,7 @@ ld_set_prec (x)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 SV *
 InfLD (sign)
@@ -2734,7 +2851,7 @@ _nnum_inc (p)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 SV *
 STRtoLD (str)
@@ -2757,7 +2874,7 @@ LDtoSTR (ld)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 LDtoSTRP (ld, decimal_prec)
@@ -2774,7 +2891,7 @@ LDtoSTRP (ld, decimal_prec)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 SV *
 NVtoLD (x)
@@ -2901,7 +3018,7 @@ broken_overload_add_eq (a, b, third)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 SV *
 _overload_mul_eq (a, b, third)
@@ -3012,7 +3129,7 @@ DESTROY (rop)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 SV *
 _overload_abs (a, b, third)
@@ -3118,7 +3235,7 @@ _overload_inc (a, b, third)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 _overload_dec (a, b, third)
@@ -3136,7 +3253,7 @@ _overload_dec (a, b, third)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 SV *
 _overload_pow (a, b, third)
@@ -3227,7 +3344,7 @@ acos_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 acosh_LD (rop, op)
@@ -3244,7 +3361,7 @@ acosh_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 asin_LD (rop, op)
@@ -3261,7 +3378,7 @@ asin_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 asinh_LD (rop, op)
@@ -3278,7 +3395,7 @@ asinh_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 atan_LD (rop, op)
@@ -3295,7 +3412,7 @@ atan_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 atanh_LD (rop, op)
@@ -3312,7 +3429,7 @@ atanh_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 atan2_LD (rop, op1, op2)
@@ -3330,7 +3447,7 @@ atan2_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 cbrt_LD (rop, op)
@@ -3347,7 +3464,7 @@ cbrt_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 ceil_LD (rop, op)
@@ -3364,7 +3481,7 @@ ceil_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 copysign_LD (rop, op1, op2)
@@ -3382,7 +3499,7 @@ copysign_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 cosh_LD (rop, op)
@@ -3399,7 +3516,7 @@ cosh_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 cos_LD (rop, op)
@@ -3416,7 +3533,7 @@ cos_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 erf_LD (rop, op)
@@ -3433,7 +3550,7 @@ erf_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 erfc_LD (rop, op)
@@ -3450,7 +3567,7 @@ erfc_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 exp_LD (rop, op)
@@ -3467,7 +3584,7 @@ exp_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 expm1_LD (rop, op)
@@ -3484,7 +3601,7 @@ expm1_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 fabs_LD (rop, op)
@@ -3501,7 +3618,7 @@ fabs_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 fdim_LD (rop, op1, op2)
@@ -3519,7 +3636,7 @@ fdim_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 int
 finite_LD (op)
@@ -3540,7 +3657,7 @@ floor_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 fma_LD (rop, op1, op2, op3)
@@ -3559,7 +3676,7 @@ fma_LD (rop, op1, op2, op3)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 fmax_LD (rop, op1, op2)
@@ -3577,7 +3694,7 @@ fmax_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 fmin_LD (rop, op1, op2)
@@ -3595,7 +3712,7 @@ fmin_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 fmod_LD (rop, op1, op2)
@@ -3613,7 +3730,7 @@ fmod_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 hypot_LD (rop, op1, op2)
@@ -3631,7 +3748,7 @@ hypot_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 frexp_LD (frac, exp, op)
@@ -3649,7 +3766,7 @@ frexp_LD (frac, exp, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 ldexp_LD (rop, op, pow)
@@ -3667,7 +3784,7 @@ ldexp_LD (rop, op, pow)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 int
 isinf_LD (op)
@@ -3696,7 +3813,7 @@ lgamma_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 SV *
 llrint_LD (op)
@@ -3741,7 +3858,7 @@ log_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 log10_LD (rop, op)
@@ -3758,7 +3875,7 @@ log10_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 log2_LD (rop, op)
@@ -3775,7 +3892,7 @@ log2_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 log1p_LD (rop, op)
@@ -3792,7 +3909,7 @@ log1p_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 modf_LD (integer, frac, op)
@@ -3810,7 +3927,7 @@ modf_LD (integer, frac, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 nan_LD (rop, op)
@@ -3827,7 +3944,7 @@ nan_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 nearbyint_LD (rop, op)
@@ -3844,7 +3961,7 @@ nearbyint_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 nextafter_LD (rop, op1, op2)
@@ -3862,7 +3979,7 @@ nextafter_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 pow_LD (rop, op1, op2)
@@ -3880,7 +3997,25 @@ pow_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
+
+void
+powq_LD (rop, op1, op2)
+	ldbl *	rop
+	ldbl *	op1
+	ldbl *	op2
+        PREINIT:
+        I32* temp;
+        PPCODE:
+        temp = PL_markstack_ptr++;
+        powq_LD(rop, op1, op2);
+        if (PL_markstack_ptr != temp) {
+          /* truly void, because dXSARGS not invoked */
+          PL_markstack_ptr = temp;
+          XSRETURN_EMPTY; /* return empty stack */
+        }
+        /* must have used dXSARGS; list context implied */
+        return;
 
 void
 remainder_LD (rop, op1, op2)
@@ -3898,7 +4033,7 @@ remainder_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 remquo_LD (rop1, rop2, op1, op2)
@@ -3917,7 +4052,7 @@ remquo_LD (rop1, rop2, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 rint_LD (rop, op)
@@ -3934,7 +4069,7 @@ rint_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 round_LD (rop, op)
@@ -3951,7 +4086,7 @@ round_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 scalbln_LD (rop, op1, op2)
@@ -3969,7 +4104,7 @@ scalbln_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 scalbn_LD (rop, op1, op2)
@@ -3987,7 +4122,7 @@ scalbn_LD (rop, op1, op2)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 int
 signbit_LD (op)
@@ -4009,7 +4144,7 @@ sincos_LD (sin, cos, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 sinh_LD (rop, op)
@@ -4026,7 +4161,7 @@ sinh_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 sin_LD (rop, op)
@@ -4043,7 +4178,7 @@ sin_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 sqrt_LD (rop, op)
@@ -4060,7 +4195,7 @@ sqrt_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 tan_LD (rop, op)
@@ -4077,7 +4212,7 @@ tan_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 tanh_LD (rop, op)
@@ -4094,7 +4229,7 @@ tanh_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 tgamma_LD (rop, op)
@@ -4111,7 +4246,7 @@ tgamma_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 trunc_LD (rop, op)
@@ -4128,7 +4263,7 @@ trunc_LD (rop, op)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 SV *
 _sincosl_status ()
@@ -4386,7 +4521,7 @@ clear_nnum ()
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 void
 set_nnum (x)
@@ -4402,7 +4537,7 @@ set_nnum (x)
           XSRETURN_EMPTY; /* return empty stack */
         }
         /* must have used dXSARGS; list context implied */
-        return; /* assume stack size is correct */
+        return;
 
 int
 _lln (x)
@@ -4417,5 +4552,9 @@ _get_actual_nvsize ()
 
 int
 _get_actual_ldblsize ()
+
+
+int
+_use_powq ()
 
 

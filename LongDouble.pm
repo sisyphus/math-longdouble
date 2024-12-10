@@ -87,7 +87,7 @@ my @tagged = qw(
     fdim_LD floor_LD fma_LD fmax_LD fmin_LD fmod_LD hypot_LD isinf_LD
     ilogb_LD isnan_LD ldexp_LD lgamma_LD  log_LD log10_LD
     log2_LD log1p_LD modf_LD nearbyint_LD nextafter_LD
-    pow_LD remainder_LD  rint_LD round_LD scalbln_LD scalbn_LD signbit_LD
+    pow_LD powq_LD remainder_LD  rint_LD round_LD scalbln_LD scalbn_LD signbit_LD
     sincos_LD sinh_LD sin_LD sqrt_LD tan_LD tanh_LD tgamma_LD trunc_LD
     );
 @Math::LongDouble::EXPORT = ();

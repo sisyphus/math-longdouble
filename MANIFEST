@@ -7,6 +7,7 @@ math_longdouble_include.h
 math_longdouble_unused.h
 README
 Changes
+quad.in
 try.in
 try2.in
 try3.in
@@ -30,6 +31,7 @@ t/nnum.t
 t/overload.t
 t/pod.t
 t/pow.t
+t/pow_exact.t
 t/prec.t
 t/special.t
 t/signbit.t
