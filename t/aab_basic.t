@@ -44,6 +44,13 @@ else {
   warn "USE_POWQ is NOT defined\n";
 }
 
+if(Math::LongDouble::_allow_powq_oload()) {
+  warn "ALLOW_POWQ_OLOAD is defined\n";
+}
+else {
+  warn "ALLOW_POWQ_OLOAD is NOT defined\n";
+}
+
 warn "Actual nvsize == ", Math::LongDouble::_get_actual_nvsize(), "\n";
 warn "Actual long double size = ", Math::LongDouble::_get_actual_ldblsize(), "\n"
 

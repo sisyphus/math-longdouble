@@ -64,6 +64,10 @@ Math::LongDouble - perl interface to C's long double operations
     sin cos atan2
     =
 
+    See the powq_LD documentation (below) for the option that allows
+    powq() to be used instead of powl() in the overloading of '**'
+    and '**='.
+
     NOTE: Making use of the '=' overloading is not recommended unless
           you understand its caveats. See 'perldoc overload' and
           read it thoroughly, including the documentation regarding
@@ -465,14 +469,19 @@ Math::LongDouble - perl interface to C's long double operations
     values, and the calculation is done using the quadmath library's
     powq() function - the result of which is cast back to a long
     double and returned to $rop.
-    The aim here is to provide a precise alternative when powl() is
-    buggy. This function will be made available automatically only if
-    it is detected that powl() is buggy && that powq() is available.
-    The function can be made explicitly unavailable by providing the
-    'USE_POWL' argument to the 'perl Makefile.PL' command.
+    The aim here is to provide a precise alternative as powl() is
+    generally buggy in the underlying math library implementation.
+    This function will be made available automatically only if the
+    'perl Makefile.PL' processing detects that powq() is available.
+
     If powq_LD() is provided then powq() will also be used in the
-    sameway in the '**' and '**=' overloading. (Otherwise powl() will
-    be used in that overloading.)
+    same way in the '**' and '**=' overloading if (and only if) the
+    command line argument ALLOW_POWQ_OLOAD was provided at the
+    'perl Makefile.PL' stage, eg 'perl Makefile.PL ALLOW_POWQ_OLOAD'.
+
+    NOTE: It's highly likely that use of powq_LD produces a correct
+          result - but that's not guaranteed, owing to the double
+          rounding that may have taken place.
 
    remainder_LD($rop, $op1, $op2);
     remainderl($op1, $op2) is assigned to $rop.

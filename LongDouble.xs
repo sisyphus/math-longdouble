@@ -1503,7 +1503,7 @@ SV * _overload_pow(pTHX_ SV * a, SV * b, SV * third) {
      sv_setiv(obj, INT2PTR(IV,ld));
      SvREADONLY_on(obj);
 
-#ifndef USE_POWQ
+#if !defined(USE_POWQ) || !defined(ALLOW_POWQ_OLOAD)
 
      if(SvUOK(b)) {
        if(SWITCH_ARGS)
@@ -1633,7 +1633,7 @@ SV * _overload_pow_eq(pTHX_ SV * a, SV * b, SV * third) {
 
     SvREFCNT_inc(a);
 
-#ifdef USE_POWQ
+#if defined(USE_POWQ) && defined(ALLOW_POWQ_OLOAD)
 
     if(SvUOK(b)) {
        *(INT2PTR(ldbl *, SvIVX(SvRV(a)))) = (ldbl)powq((__float128)*(INT2PTR(ldbl *, SvIVX(SvRV(a)))),
@@ -2743,6 +2743,14 @@ int _get_actual_ldblsize(void) {
 
 int _use_powq(void) {
 #if defined(USE_POWQ)
+  return 1;
+#else
+  return 0;
+#endif
+}
+
+int _allow_powq_oload(void) {
+#if defined(ALLOW_POWQ_OLOAD)
   return 1;
 #else
   return 0;
@@ -4556,5 +4564,9 @@ _get_actual_ldblsize ()
 
 int
 _use_powq ()
+
+
+int
+_allow_powq_oload ()
 
 

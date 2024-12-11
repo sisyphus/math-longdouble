@@ -3,11 +3,11 @@
 #include <quadmath.h>
 
 int main(void) {
-  long double check, sld, ld1 = 10.0L, ld2 = -298.0L;
-  sld = strtold("1e-298", NULL);
-  check = powl(ld1, ld2);
-  if(check == sld) printf("%.21Lg\n", check);
-  else printf("miscalculated to %.21Lg\n", check);
+  __float128 check, sld, ld1 = 10.0Q, ld2 = -298.0Q;
+  sld = strtoflt128("1e-298", NULL);
+  check = powq(ld1, ld2);
+  if(check == sld) printf("powq ok");
+  else printf("powq calculation incorrect");
   return 0;
 }
 

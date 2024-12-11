@@ -23,11 +23,10 @@ print "Couldn't open $log for writing: $!\n" unless $open;
 # (which are both "exit 0;")
 
 my $cc;
-my $no_use_powq = 0;
 
 if(@ARGV) {
   for my $arg(@ARGV) {
-    $no_use_powq = 1 if $arg =~ /USE_POWL/i;
+    $defines .= ' -DALLOW_POWQ_OLOAD' if $arg =~ /ALLOW_POWQ_OLOAD/i;
     $cc = (split /=/, $arg)[1] if $arg =~ /^cc=/i;
   }
 }
@@ -191,23 +190,18 @@ else {
 }
 
 ###################### NEW ######################
-if(!$no_use_powq) {
-  # If powl() is buggy we want to use powq(), if available.
-  my $out = `$cc -o quad.exe -x c quad.in -D__USE_MINGW_ANSI_STDIO -lm -lquadmath 2>&1`; # No optimization.
-  if($open) {
-    if(-e 'quad.exe') {
-      $out = $^O =~ /MSWin32/i ? `quad.exe 2>&1`
-                               : `./quad.exe 2>&1`;
-      print WR "\nquad.exe output: $out\n";
-      $defines .= " -DUSE_POWQ" if $out =~ /^miscalculated to/;
-    }
-    else {
-      print WR "\nbuilding quad.exe failed: $out\n";
-    }
+# We will provide powq_LD() function if a reliable powq is available.
+$out = `$cc -o quad.exe -x c quad.in -D__USE_MINGW_ANSI_STDIO -lm -lquadmath 2>&1`; # No optimization.
+if($open) {
+  if(-e 'quad.exe') {
+    $out = $^O =~ /MSWin32/i ? `quad.exe 2>&1`
+                             : `./quad.exe 2>&1`;
+    print WR "\nquad.exe output: $out\n";
+    $defines .= " -DUSE_POWQ" if $out =~ /^powq ok/;
   }
-}
-else {
-  print WR "\nUse of powl() was specifcally requested - not attempting to use powq()\n" if $open;
+  else {
+    print WR "\nbuilding quad.exe failed: $out\n";
+  }
 }
 #################################################
 
